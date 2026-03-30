@@ -16,8 +16,6 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
-
-  /* HEADER */
   header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:12px;height:58px;flex-shrink:0;}
   .logo{width:34px;height:34px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#000;clip-path:polygon(0 0,85% 0,100% 15%,100% 100%,15% 100%,0 85%);flex-shrink:0;}
   .htitle{flex:1;}
@@ -28,18 +26,12 @@
   select:focus{border-color:var(--accent);}
   .btn-add{background:var(--accent);color:#000;border:none;padding:6px 11px;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;white-space:nowrap;transition:background .2s;}
   .btn-add:hover{background:var(--accent2);}
-
-  /* QUICK ACTIONS */
   .qa{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 16px;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
   .qa button{background:var(--bg);border:1px solid var(--border);color:var(--dim);padding:4px 10px;font-size:12px;border-radius:20px;cursor:pointer;transition:all .2s;font-family:'IBM Plex Sans',sans-serif;}
   .qa button:hover{border-color:var(--accent);color:var(--accent);}
-
-  /* MAIN */
   main{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
   main::-webkit-scrollbar{width:4px;}
   main::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
-  /* WELCOME */
   .welcome{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:20px;}
   .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;}
   .welcome p{font-size:13px;color:var(--dim);line-height:1.6;}
@@ -47,8 +39,6 @@
   .chip{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--dim);cursor:pointer;transition:all .2s;line-height:1.4;}
   .chip:hover{border-color:var(--accent);color:var(--text);background:rgba(232,160,32,0.05);}
   .chip span{display:block;font-size:15px;margin-bottom:3px;}
-
-  /* MESSAGES */
   .msg{display:flex;gap:10px;animation:fadeUp .3s ease;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
   .msg.user{flex-direction:row-reverse;}
@@ -65,15 +55,11 @@
   .bubble tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
   .bubble ul{padding-left:16px;margin:6px 0;}
   .bubble li{margin:3px 0;}
-
-  /* TYPING */
   .dots{display:flex;gap:4px;padding:4px 0;}
   .dots span{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite;opacity:.8;}
   .dots span:nth-child(2){animation-delay:.2s;}
   .dots span:nth-child(3){animation-delay:.4s;}
   @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-
-  /* FOOTER */
   footer{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;flex-shrink:0;}
   .irow{display:flex;gap:8px;align-items:flex-end;}
   textarea{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;border-radius:6px;resize:none;min-height:40px;max-height:120px;outline:none;line-height:1.5;transition:border-color .2s;}
@@ -85,8 +71,6 @@
   .fnote{text-align:center;font-size:10px;color:var(--muted);margin-top:7px;font-family:'IBM Plex Mono',monospace;}
   .sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;vertical-align:middle;margin-right:4px;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-  /* MODAL */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
   .modal{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:24px;width:90%;max-width:400px;}
   .modal h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--accent);margin-bottom:18px;}
@@ -98,12 +82,8 @@
   .mbtn1{flex:1;background:var(--accent);color:#000;border:none;padding:10px;font-weight:700;font-size:13px;border-radius:4px;cursor:pointer;}
   .mbtn1:hover{background:var(--accent2);}
   .mbtn2{background:transparent;color:var(--dim);border:1px solid var(--border);padding:10px 14px;font-size:13px;border-radius:4px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;}
-
-  @media(max-width:600px){
-    .htitle h1{font-size:16px;}
-    proj-wrap select{max-width:110px;}
-    .grid{grid-template-columns:1fr 1fr;}
-  }
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a2e1a;border:1px solid var(--green);color:#7dca7d;padding:8px 18px;border-radius:20px;font-size:12px;z-index:200;animation:fadeUp .3s ease;display:none;}
+  @media(max-width:600px){.htitle h1{font-size:16px;}.grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -134,7 +114,7 @@
 <main id="chat">
   <div class="welcome">
     <h2>ΚΑΛΩΣ ΗΡΘΕΣ, ΕΡΓΟΛΑΒΕ</h2>
-    <p>Είμαι ο ψηφιακός σου βοηθός για ανακαινίσεις. Παρακολουθώ κόστη, εργασίες, πληρωμές και σε βοηθώ με επικοινωνία πελατών.</p>
+    <p>Είμαι ο ψηφιακός σου βοηθός για ανακαινίσεις. Τα δεδομένα σου αποθηκεύονται στο Google Sheets — ασφαλή και προσβάσιμα από παντού.</p>
     <div class="grid">
       <div class="chip" onclick="ex('Κατέγραψε πληρωμή 850€ σε Γιώργη ελαιοχρωματιστή για χρώματα σαλονιού')"><span>💰</span>Καταχώρηση πληρωμής</div>
       <div class="chip" onclick="ex('Ποιες εργασίες εκκρεμούν;')"><span>📋</span>Εκκρεμείς εργασίες</div>
@@ -151,8 +131,10 @@
     <textarea id="inp" rows="1" placeholder="Γράψε ό,τι χρειάζεσαι..." onkeydown="onKey(event)" oninput="resize(this)"></textarea>
     <button class="send" id="sendBtn" onclick="send()">➤</button>
   </div>
-  <div class="fnote"><span class="sdot"></span>Claude AI · Ελληνικά</div>
+  <div class="fnote"><span class="sdot"></span>Claude AI · Google Sheets · Αποθηκεύεται αυτόματα</div>
 </footer>
+
+<div class="toast" id="toast">✅ Αποθηκεύτηκε!</div>
 
 <div class="overlay" id="modal" style="display:none">
   <div class="modal">
@@ -176,17 +158,27 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'ergolabos_v2';
+let projects = {}, currentProject = null, history = [], loading = false;
 
-let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"projects":{},"current":null}');
-let history = [];
-let loading = false;
+async function apiCall(body) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
 
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || '✅ Αποθηκεύτηκε!';
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
 
 function buildSystem() {
   const today = new Date().toLocaleDateString('el-GR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const cp = state.current && state.projects[state.current];
+  const cp = currentProject && projects[currentProject];
   let ctx = '';
   if (cp) {
     const tot = cp.expenses.reduce((a,e)=>a+e.amount,0);
@@ -198,56 +190,69 @@ function buildSystem() {
   return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, διαχείριση εργασιών, reports, emails πελατών, υπολογισμοί κόστους, χρονοδιαγράμματα.\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
 }
 
-// Init UI
-function init() {
-  refreshSelect();
-  if (state.current && state.projects[state.current]) {
-    document.getElementById('projSel').value = state.current;
-    const cp = state.projects[state.current];
-    const tot = cp.expenses.reduce((a,e)=>a+e.amount,0);
-    addAI(`📂 Συνεχίζεις το έργο **"${cp.name}"**\nΠελάτης: ${cp.client} | Φάση: ${cp.phase}\nΈξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
+async function init() {
+  addAI('⏳ Φορτώνω τα έργα σου...');
+  try {
+    const data = await apiCall({ type: 'load_projects' });
+    projects = data.projects || {};
+    refreshSelect();
+    document.getElementById('chat').innerHTML = '';
+    if (Object.keys(projects).length > 0) {
+      const firstId = Object.keys(projects)[0];
+      currentProject = firstId;
+      document.getElementById('projSel').value = firstId;
+      const p = projects[firstId];
+      const tot = p.expenses.reduce((a,e)=>a+e.amount,0);
+      addAI(`📂 Καλώς ήρθες! Φόρτωσα τα έργα σου από Google Sheets.\n\nΕνεργό: **"${p.name}"** | ${p.client} | Έξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
+    } else {
+      addAI('👋 Καλώς ήρθες! Δεν έχεις έργα ακόμα. Πάτα **"+ Έργο"** για να ξεκινήσεις!');
+    }
+  } catch(e) {
+    document.getElementById('chat').innerHTML = '';
+    addAI('⚠️ Δεν μπόρεσα να συνδεθώ με το Google Sheets. Έλεγξε τις ρυθμίσεις.');
   }
 }
 
 function refreshSelect() {
   const sel = document.getElementById('projSel');
-  const cur = sel.value;
   sel.innerHTML = '<option value="">— Επιλογή έργου —</option>';
-  Object.entries(state.projects).forEach(([id,p]) => {
+  Object.entries(projects).forEach(([id,p]) => {
     sel.innerHTML += `<option value="${id}">${p.name}</option>`;
   });
-  if (state.current) sel.value = state.current;
+  if (currentProject) sel.value = currentProject;
 }
 
 function openModal() { document.getElementById('modal').style.display='flex'; setTimeout(()=>document.getElementById('fName').focus(),100); }
 function closeModal() { document.getElementById('modal').style.display='none'; }
 
-function createProj() {
+async function createProj() {
   const name = document.getElementById('fName').value.trim();
   if (!name) { alert('Δώσε όνομα!'); return; }
   const id = 'p'+Date.now();
-  state.projects[id] = {
-    name, client: document.getElementById('fClient').value.trim()||'Άγνωστος',
+  const p = {
+    id, name,
+    client: document.getElementById('fClient').value.trim()||'Άγνωστος',
     budget: document.getElementById('fBudget').value||0,
     phase: document.getElementById('fPhase').value,
     expenses:[], tasks:[]
   };
-  state.current = id;
-  save();
+  projects[id] = p;
+  try {
+    await apiCall({ type: 'save_project', data: p });
+    showToast('✅ Έργο αποθηκεύτηκε!');
+  } catch(e) { console.error(e); }
+  currentProject = id;
   refreshSelect();
   closeModal();
   ['fName','fClient','fBudget'].forEach(i=>document.getElementById(i).value='');
   history = [];
-  const p = state.projects[id];
-  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
+  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε και αποθηκεύτηκε στο Google Sheets!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
 }
 
 function switchProj() {
-  const id = document.getElementById('projSel').value;
-  state.current = id || null;
-  save();
-  if (id && state.projects[id]) {
-    const p = state.projects[id];
+  currentProject = document.getElementById('projSel').value || null;
+  if (currentProject && projects[currentProject]) {
+    const p = projects[currentProject];
     const tot = p.expenses.reduce((a,e)=>a+e.amount,0);
     history = [];
     addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client} | Φάση: ${p.phase}\nΈξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
@@ -255,42 +260,34 @@ function switchProj() {
 }
 
 function addUser(text) {
-  const d = document.createElement('div');
-  d.className='msg user';
+  const d=document.createElement('div'); d.className='msg user';
   d.innerHTML=`<div class="ava user">👷</div><div class="bubble user">${esc(text)}</div>`;
-  document.getElementById('chat').appendChild(d);
-  scroll();
+  document.getElementById('chat').appendChild(d); scroll();
 }
 
 function addAI(text) {
-  const d = document.createElement('div');
-  d.className='msg';
+  const d=document.createElement('div'); d.className='msg';
   d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai">${fmt(text)}</div>`;
-  document.getElementById('chat').appendChild(d);
-  scroll();
+  document.getElementById('chat').appendChild(d); scroll();
 }
 
 function showTyping() {
-  const d = document.createElement('div');
-  d.className='msg'; d.id='typ';
+  const d=document.createElement('div'); d.className='msg'; d.id='typ';
   d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai"><div class="dots"><span></span><span></span><span></span></div></div>`;
-  document.getElementById('chat').appendChild(d);
-  scroll();
+  document.getElementById('chat').appendChild(d); scroll();
 }
 function hideTyping() { const t=document.getElementById('typ'); if(t)t.remove(); }
-function scroll() { document.getElementById('chat').scrollTop = 99999; }
+function scroll() { document.getElementById('chat').scrollTop=99999; }
 
 function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
 
 function fmt(text) {
-  const lines = text.split('\n');
-  let out=[], inT=false, rows=[], first=true, ki=0;
-  const flush=()=>{ if(rows.length){let h='<table>'; rows.forEach((r,i)=>{ h+='<tr>'+r.map(c=>i===0?`<th>${c}</th>`:`<td>${c}</td>`).join('')+'</tr>'; }); h+='</table>'; out.push(h); rows=[]; } inT=false; first=true; };
+  const lines=text.split('\n'); let out=[],inT=false,rows=[];
+  const flush=()=>{ if(rows.length){let h='<table>'; rows.forEach((r,i)=>{ h+='<tr>'+r.map(c=>i===0?`<th>${c}</th>`:`<td>${c}</td>`).join('')+'</tr>'; }); h+='</table>'; out.push(h); rows=[]; } inT=false; };
   lines.forEach((line,i)=>{
     if(/^\|/.test(line.trim())){
       if(/^[\|\s\-:]+$/.test(line.trim())) return;
-      inT=true;
-      rows.push(line.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim()));
+      inT=true; rows.push(line.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim()));
     } else {
       if(inT) flush();
       if(/^[-•*]\s/.test(line.trim())) out.push(`<li>${inl(line.trim().slice(2))}</li>`);
@@ -299,9 +296,7 @@ function fmt(text) {
     }
   });
   if(inT) flush();
-  let f=out.join('');
-  f=f.replace(/((?:<li>.*?<\/li>)+)/g,'<ul>$1</ul>');
-  return f;
+  let f=out.join(''); f=f.replace(/((?:<li>.*?<\/li>)+)/g,'<ul>$1</ul>'); return f;
 }
 
 function inl(t) {
@@ -309,27 +304,20 @@ function inl(t) {
 }
 
 async function send(txt) {
-  const inp = document.getElementById('inp');
-  const text = (txt||inp.value).trim();
-  if (!text||loading) return;
+  const inp=document.getElementById('inp');
+  const text=(txt||inp.value).trim();
+  if(!text||loading) return;
   inp.value=''; resize(inp);
   addUser(text);
   history.push({role:'user',content:text});
-  loading=true;
-  document.getElementById('sendBtn').disabled=true;
+  loading=true; document.getElementById('sendBtn').disabled=true;
   showTyping();
   try {
-    const res = await fetch('/api/chat', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:buildSystem(),
-        messages:history
-      })
+    const data = await apiCall({
+      type: 'chat',
+      system: buildSystem(),
+      messages: history
     });
-    const data = await res.json();
     const reply = data?.content?.[0]?.text;
     if(!reply) throw new Error();
     history.push({role:'assistant',content:reply});
@@ -339,14 +327,12 @@ async function send(txt) {
     hideTyping();
     addAI('❌ Σφάλμα σύνδεσης. Δοκίμασε ξανά.');
   }
-  loading=false;
-  document.getElementById('sendBtn').disabled=false;
+  loading=false; document.getElementById('sendBtn').disabled=false;
 }
 
 function qa(type) {
   const map={'πληρωμή':'Πληρωμή: ','εργασία':'Πρόσθεσε εργασία: ','report':'Δώσε μου report με τα έξοδα και την κατάσταση του έργου.','email':'Email για τον πελάτη: ','χρονοδιάγραμμα':'Φτιάξε χρονοδιάγραμμα εργασιών.','κόστος':'Υπολόγισε κόστος για: '};
-  const inp=document.getElementById('inp');
-  inp.value=map[type]||''; inp.focus(); resize(inp);
+  const inp=document.getElementById('inp'); inp.value=map[type]||''; inp.focus(); resize(inp);
 }
 
 function ex(text) { send(text); }

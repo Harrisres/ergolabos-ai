@@ -314,8 +314,7 @@ async function send(txt) {
   loading=true; document.getElementById('sendBtn').disabled=true;
   showTyping();
   try {
-    const data = await apiCall({
-      type: 'chat',
+  const data = await apiCall({
       system: buildSystem(),
       messages: history
     });

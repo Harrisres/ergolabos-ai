@@ -82,7 +82,7 @@
   .mbtn1{flex:1;background:var(--accent);color:#000;border:none;padding:10px;font-weight:700;font-size:13px;border-radius:4px;cursor:pointer;}
   .mbtn1:hover{background:var(--accent2);}
   .mbtn2{background:transparent;color:var(--dim);border:1px solid var(--border);padding:10px 14px;font-size:13px;border-radius:4px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;}
-  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a2e1a;border:1px solid var(--green);color:#7dca7d;padding:8px 18px;border-radius:20px;font-size:12px;z-index:200;animation:fadeUp .3s ease;display:none;}
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a2e1a;border:1px solid var(--green);color:#7dca7d;padding:8px 18px;border-radius:20px;font-size:12px;z-index:200;display:none;}
   @media(max-width:600px){.htitle h1{font-size:16px;}.grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
@@ -160,12 +160,20 @@
 <script>
 let projects = {}, currentProject = null, history = [], loading = false;
 
-async function apiCall(body) {
-  const endpoint = body.type === 'chat' ? '/api/chat' : '/api/sheets';
-  const res = await fetch(endpoint, {
+async function sheetsCall(type, data) {
+  const res = await fetch('/api/sheets', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ type, data })
+  });
+  return res.json();
+}
+
+async function chatCall(system, messages) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system, messages })
   });
   return res.json();
 }
@@ -192,9 +200,9 @@ function buildSystem() {
 }
 
 async function init() {
-  addAI('⏳ Φορτώνω τα έργα σου...');
+  addAI('⏳ Φορτώνω τα έργα σου από Google Sheets...');
   try {
-    const data = await apiCall({ type: 'load_projects' });
+    const data = await sheetsCall('load_projects');
     projects = data.projects || {};
     refreshSelect();
     document.getElementById('chat').innerHTML = '';
@@ -204,7 +212,7 @@ async function init() {
       document.getElementById('projSel').value = firstId;
       const p = projects[firstId];
       const tot = p.expenses.reduce((a,e)=>a+e.amount,0);
-      addAI(`📂 Καλώς ήρθες! Φόρτωσα τα έργα σου από Google Sheets.\n\nΕνεργό: **"${p.name}"** | ${p.client} | Έξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
+      addAI(`📂 Καλώς ήρθες! Φόρτωσα τα έργα σου.\n\nΕνεργό: **"${p.name}"** | ${p.client} | Έξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
     } else {
       addAI('👋 Καλώς ήρθες! Δεν έχεις έργα ακόμα. Πάτα **"+ Έργο"** για να ξεκινήσεις!');
     }
@@ -230,24 +238,18 @@ async function createProj() {
   const name = document.getElementById('fName').value.trim();
   if (!name) { alert('Δώσε όνομα!'); return; }
   const id = 'p'+Date.now();
-  const p = {
-    id, name,
-    client: document.getElementById('fClient').value.trim()||'Άγνωστος',
-    budget: document.getElementById('fBudget').value||0,
-    phase: document.getElementById('fPhase').value,
-    expenses:[], tasks:[]
-  };
+  const p = { id, name, client: document.getElementById('fClient').value.trim()||'Άγνωστος', budget: document.getElementById('fBudget').value||0, phase: document.getElementById('fPhase').value, expenses:[], tasks:[] };
   projects[id] = p;
   try {
-    await apiCall({ type: 'save_project', data: p });
-    showToast('✅ Έργο αποθηκεύτηκε!');
+    await sheetsCall('save_project', p);
+    showToast('✅ Έργο αποθηκεύτηκε στο Google Sheets!');
   } catch(e) { console.error(e); }
   currentProject = id;
   refreshSelect();
   closeModal();
   ['fName','fClient','fBudget'].forEach(i=>document.getElementById(i).value='');
   history = [];
-  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε και αποθηκεύτηκε στο Google Sheets!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
+  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε και αποθηκεύτηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
 }
 
 function switchProj() {
@@ -314,10 +316,7 @@ async function send(txt) {
   loading=true; document.getElementById('sendBtn').disabled=true;
   showTyping();
   try {
-  const data = await apiCall({
-      system: buildSystem(),
-      messages: history
-    });
+    const data = await chatCall(buildSystem(), history);
     const reply = data?.content?.[0]?.text;
     if(!reply) throw new Error();
     history.push({role:'assistant',content:reply});

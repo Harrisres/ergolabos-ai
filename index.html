@@ -161,7 +161,8 @@
 let projects = {}, currentProject = null, history = [], loading = false;
 
 async function apiCall(body) {
-  const res = await fetch('/api/chat', {
+  const endpoint = body.type === 'chat' ? '/api/chat' : '/api/sheets';
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)

@@ -3,7 +3,6 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-// Θυμάται το ενεργό έργο ανά χρήστη
 const userState = {};
 
 async function supabaseGet(table) {
@@ -40,53 +39,29 @@ export default async function handler(req, res) {
     const chatId = message.chat.id;
     const text = message.text;
 
-    // Load data
     const [projects, expenses] = await Promise.all([
       supabaseGet('projects'),
       supabaseGet('expenses')
     ]);
 
     const projectMap = {};
-    (projects || []).forEach(p => {
-      projectMap[p.id] = { ...p, expenses: [] };
-    });
-    (expenses || []).forEach(e => {
-      if (projectMap[e.project_id]) projectMap[e.project_id].expenses.push(e);
-    });
+    (projects || []).forEach(p => { projectMap[p.id] = { ...p, expenses: [] }; });
+    (expenses || []).forEach(e => { if (projectMap[e.project_id]) projectMap[e.project_id].expenses.push(e); });
 
-    // Αν ο χρήστης δεν έχει επιλέξει έργο, χρησιμοποίησε το πρώτο
     if (!userState[chatId] && projects?.length > 0) {
       userState[chatId] = projects[0].id;
     }
     const activeProjectId = userState[chatId] || projects?.[0]?.id || '';
     const activeProject = projectMap[activeProjectId];
-
-    // Φτιάξε λίστα έργων για να μπορεί ο χρήστης να επιλέξει
     const projectList = (projects || []).map((p, i) => `${i+1}. ${p.name} (${p.client})`).join('\n');
 
-    // Context για Claude
     const activeInfo = activeProject ? (() => {
       const tot = activeProject.expenses.reduce((a,e) => a + Number(e.amount), 0);
       const bud = Number(activeProject.budget) || 0;
       return `Ενεργό έργο: ${activeProject.name} (${activeProject.client})\nΠ/Υ: €${bud.toLocaleString('el-GR')} | Έξοδα: €${tot.toLocaleString('el-GR')} | Υπόλοιπο: €${(bud-tot).toLocaleString('el-GR')}`;
     })() : 'Κανένα ενεργό έργο';
 
-    const system = `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, σύντομα και πρακτικά.
-
-${activeInfo}
-
-Όλα τα έργα:
-${projectList}
-
-Αν ο χρήστης θέλει να αλλάξει ενεργό έργο, πρόσθεσε: SWITCH_PROJECT:[αριθμός]
-
-ΟΤΑΝ ο χρήστης αναφέρει πληρωμή ή έξοδο, ΠΑΝΤΑ πρόσθεσε:
-SAVE_EXPENSE:{"category":"[κατηγορία]","recipient":"[παραλήπτης]","amount":[ποσό],"note":"[σημείωση]"}
-
-ΟΤΑΝ ο χρήστης αναφέρει νέο έργο, ΠΑΝΤΑ πρόσθεσε:
-SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσό]}
-
-Απάντα σύντομα, max 4-5 γραμμές.`;
+    const system = `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, σύντομα και πρακτικά.\n\n${activeInfo}\n\nΌλα τα έργα:\n${projectList}\n\nΑν ο χρήστης θέλει να αλλάξει ενεργό έργο, πρόσθεσε: SWITCH_PROJECT:[αριθμός]\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή ή έξοδο, ΠΑΝΤΑ πρόσθεσε:\nSAVE_EXPENSE:{"category":"[κατηγορία]","recipient":"[παραλήπτης]","amount":[ποσό],"note":"[σημείωση]"}\n\nΟΤΑΝ ο χρήστης αναφέρει νέο έργο, ΠΑΝΤΑ πρόσθεσε:\nSAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσό]}\n\nΑπάντα σύντομα, max 4-5 γραμμές.`;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -97,7 +72,6 @@ SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσ
     const claudeData = await claudeRes.json();
     let reply = claudeData?.content?.[0]?.text || 'Δεν μπόρεσα να απαντήσω.';
 
-    // SWITCH PROJECT
     const switchMatch = reply.match(/SWITCH_PROJECT:(\d+)/);
     if (switchMatch) {
       const idx = parseInt(switchMatch[1]) - 1;
@@ -107,7 +81,6 @@ SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσ
       }
     }
 
-    // SAVE EXPENSE
     const expMatch = reply.match(/SAVE_EXPENSE:(\{[^}]+\})/);
     if (expMatch) {
       try {
@@ -125,7 +98,6 @@ SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσ
       } catch(e) { console.error(e); }
     }
 
-    // SAVE PROJECT
     const projMatch = reply.match(/SAVE_PROJECT:(\{[^}]+\})/);
     if (projMatch) {
       try {
@@ -149,3 +121,4 @@ SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσ
   } catch(e) {
     return res.status(500).json({ error: e.message });
   }
+}

@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0f121b; --surface:#1c1f26; --surface2:#22262f;
+    --bg:#111318; --surface:#1c1f26; --surface2:#22262f;
     --border:#2c3040; --border2:#353a4a;
     --accent:#f0a500; --accent2:#d08800;
     --text:#eef0f5; --dim:#9098b0; --muted:#50576a;
     --ubg:#162216; --uborder:#2a4a2a;
     --aibg:#131625; --aiborder:#232850;
-    --green:#2ecc71; --red:#e74c3c; --blue:#3498db;
+    --green:#2ecc71; --red:#e74c3c; --blue:#3498db; --orange:#e67e22;
     --radius:10px; --radius-sm:7px;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -33,8 +33,10 @@
   .qa{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
   .qa button{background:var(--surface2);border:1px solid var(--border2);color:var(--dim);padding:7px 14px;font-size:13px;font-weight:500;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
   .qa button:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,165,0,0.08);}
-  .qa button.receipt-btn{border-color:rgba(52,152,219,0.4);color:var(--blue);}
-  .qa button.receipt-btn:hover{border-color:var(--blue);background:rgba(52,152,219,0.08);}
+  .qa .receipt-btn{border-color:rgba(52,152,219,0.4);color:var(--blue);}
+  .qa .receipt-btn:hover{border-color:var(--blue);background:rgba(52,152,219,0.08);}
+  .qa .schedule-btn{border-color:rgba(46,204,113,0.4);color:var(--green);}
+  .qa .schedule-btn:hover{border-color:var(--green);background:rgba(46,204,113,0.08);}
   main{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
   main::-webkit-scrollbar{width:5px;}
   main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
@@ -78,8 +80,8 @@
   .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;vertical-align:middle;margin-right:5px;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(5px);}
-  .modal{background:var(--surface);border:1px solid var(--border2);border-top:3px solid var(--accent);border-radius:var(--radius);padding:28px;width:92%;max-width:480px;max-height:85vh;overflow-y:auto;}
-  .modal h3{font-family:'Bebas Neue',sans-serif;font: size 22px;px;letter-spacing:2px;color:var(--accent);margin-bottom:20px;}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-top:3px solid var(--accent);border-radius:var(--radius);padding:28px;width:92%;max-width:520px;max-height:85vh;overflow-y:auto;}
+  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:20px;}
   .fg{margin-bottom:14px;}
   .fg label{display:block;font-size:12px;color:var(--dim);margin-bottom:5px;text-transform:uppercase;font-weight:600;letter-spacing:.5px;}
   .fg input,.fg select{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 13px;font-family:'Inter',sans-serif;font-size:14px;border-radius:var(--radius-sm);outline:none;}
@@ -90,7 +92,7 @@
   .mbtn2{background:transparent;color:var(--dim);border:1px solid var(--border2);padding:12px 18px;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
   .mbtn2:hover{color:var(--text);border-color:var(--dim);}
   .mbtn-blue{flex:1;background:var(--blue);color:#fff;border:none;padding:12px;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;}
-  .mbtn-blue:hover{background:#2980b9;}
+  .mbtn-green{flex:1;background:var(--green);color:#000;border:none;padding:12px;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;}
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#152515;border:1px solid var(--green);color:#5dca7d;padding:10px 22px;border-radius:25px;font-size:13px;font-weight:600;z-index:200;display:none;}
   .tabs{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;}
   .tab{background:var(--surface2);border:1px solid var(--border2);color:var(--dim);padding:8px 14px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
@@ -98,9 +100,33 @@
   .manage-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;}
   .manage-item-name{font-weight:600;font-size:14px;}
   .manage-item-sub{font-size:12px;color:var(--dim);margin-top:3px;}
-  .btn-del{background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.25);padding:6px 12px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;margin-left:12px;white-space:nowrap;}
+  .btn-del{background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.25);padding:6px 12px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;margin-left:8px;white-space:nowrap;}
   .btn-del:hover{background:rgba(231,76,60,0.25);}
   .empty-msg{font-size:13px;color:var(--muted);padding:12px 0;text-align:center;}
+
+  /* PAYMENT SCHEDULE */
+  .payment-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;}
+  .payment-row.paid{opacity:0.6;border-color:var(--green);}
+  .payment-row.overdue{border-color:var(--red);}
+  .payment-row.upcoming{border-color:var(--orange);}
+  .payment-info{flex:1;}
+  .payment-desc{font-weight:600;font-size:14px;}
+  .payment-meta{font-size:12px;color:var(--dim);margin-top:3px;}
+  .payment-amount{font-weight:700;font-size:15px;color:var(--accent);margin-right:10px;white-space:nowrap;}
+  .btn-paid{background:rgba(46,204,113,0.12);color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:6px 12px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;}
+  .btn-paid:hover{background:rgba(46,204,113,0.25);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-left:8px;}
+  .badge-paid{background:rgba(46,204,113,0.15);color:var(--green);}
+  .badge-overdue{background:rgba(231,76,60,0.15);color:var(--red);}
+  .badge-upcoming{background:rgba(230,126,34,0.15);color:var(--orange);}
+  .schedule-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;}
+  .schedule-row input{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;font-size:13px;border-radius:var(--radius-sm);outline:none;font-family:'Inter',sans-serif;}
+  .schedule-row input:focus{border-color:var(--accent);}
+  .schedule-row .pct{width:70px;}
+  .schedule-row .desc{flex:1;}
+  .schedule-row .amt{width:110px;color:var(--accent);font-weight:600;}
+  .schedule-summary{background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;}
+
   @media(max-width:600px){
     header{padding:0 12px;height:58px;}
     .qa{padding:8px 12px;}
@@ -109,6 +135,7 @@
     .proj-wrap select{max-width:110px;}
     .grid{grid-template-columns:1fr 1fr;}
     .htitle h1{font-size:17px;}
+    .payment-row{flex-wrap:wrap;}
   }
 </style>
 </head>
@@ -117,8 +144,8 @@
 <header>
   <div class="logo">Ε</div>
   <div class="htitle">
-    <h1>Contractor AI</h1>
-    <h3>Ψηφιακός Βοηθός Ανακαίνισης</h3>
+    <h1>ΕΡΓΟΛΑΒΟΣ AI</h1>
+    <p>Ψηφιακός Βοηθός Ανακαίνισης</p>
   </div>
   <div class="proj-wrap">
     <select id="projSel" onchange="switchProj()">
@@ -137,6 +164,7 @@
   <button onclick="qa('χρονοδιάγραμμα')">📅 Χρονοδ/μα</button>
   <button onclick="qa('κόστος')">📋 Κόστος</button>
   <button class="receipt-btn" onclick="openReceiptModal()">💳 Είσπραξη</button>
+  <button class="schedule-btn" onclick="openScheduleModal()">🗓️ Δόσεις</button>
 </div>
 
 <main id="chat">
@@ -147,9 +175,9 @@
       <div class="chip" onclick="ex('Κατέγραψε πληρωμή 850€ σε Γιώργη ελαιοχρωματιστή')"><span>💰</span>Καταχώρηση πληρωμής</div>
       <div class="chip" onclick="ex('Ποιες εργασίες εκκρεμούν;')"><span>📋</span>Εκκρεμείς εργασίες</div>
       <div class="chip" onclick="ex('Φτιάξε email για τον πελάτη ότι αρχίζουμε Δευτέρα')"><span>✉️</span>Email σε πελάτη</div>
-      <div class="chip" onclick="ex('Δώσε μου report με όλα τα έξοδα και εισπράξεις μέχρι σήμερα')"><span>📊</span>Report εξόδων</div>
+      <div class="chip" onclick="ex('Δώσε μου report με έξοδα, εισπράξεις και δόσεις')"><span>📊</span>Report εξόδων</div>
       <div class="chip" onclick="ex('Υπολόγισε κόστος πλακάκια για δωμάτιο 18τμ')"><span>🧮</span>Υπολογισμός κόστους</div>
-      <div class="chip" onclick="ex('Πρόσθεσε εργασία: γυψοσανίδα σαλόνι, Νίκος, Παρασκευή')"><span>🔨</span>Νέα εργασία</div>
+      <div class="chip" onclick="openScheduleModal()"><span>🗓️</span>Πρόγραμμα δόσεων</div>
     </div>
   </div>
 </main>
@@ -168,17 +196,10 @@
 <div class="overlay" id="modal" style="display:none">
   <div class="modal">
     <h3>ΝΕΟ ΕΡΓΟΤΑΞΙΟ</h3>
-    <div class="fg"><label>Όνομα Έργου</label><input id="fName" placeholder="π.χ. Διαμέρισμα Κηφισιάς"/></div>
-    <div class="fg"><label>Πελάτης</label><input id="fClient" placeholder="π.χ. Παπαδόπουλος Γιώργης"/></div>
-    <div class="fg"><label>Συνολικό Κόστος Έργου (€)</label><input id="fBudget" type="number" placeholder="π.χ. 75000"/></div>
-    <div class="fg">
-      <label>Φάση</label>
-      <select id="fPhase">
-        <option>Προετοιμασία</option><option>Κατεδάφιση</option><option>Εγκαταστάσεις</option>
-        <option>Τοιχοποιία / Γυψοσανίδα</option><option>Πλακάκια</option>
-        <option>Ελαιοχρωματισμός</option><option>Τελειώματα</option><option>Ολοκλήρωση</option>
-      </select>
-    </div>
+    <div class="fg"><label>Όνομα Έργου</label><input id="fName" placeholder="π.χ. Δουκίσσης Πλακεντίας"/></div>
+    <div class="fg"><label>Πελάτης</label><input id="fClient" placeholder="π.χ. Παπαϊωάννου"/></div>
+    <div class="fg"><label>Συνολικό Κόστος Έργου (€)</label><input id="fBudget" type="number" placeholder="π.χ. 62520"/></div>
+    <div class="fg"><label>Ημερομηνία Έναρξης</label><input id="fStartDate" type="date"/></div>
     <div class="mbtns">
       <button class="mbtn2" onclick="closeModal()">Ακύρωση</button>
       <button class="mbtn1" onclick="createProj()">Δημιουργία</button>
@@ -190,12 +211,21 @@
 <div class="overlay" id="receiptModal" style="display:none">
   <div class="modal" style="border-top-color:var(--blue)">
     <h3 style="color:var(--blue)">💳 ΝΕΑ ΕΙΣΠΡΑΞΗ</h3>
-    <div class="fg"><label>Ποσό (€)</label><input id="rAmount" type="number" placeholder="π.χ. 18000"/></div>
-    <div class="fg"><label>Σημείωση</label><input id="rNote" placeholder="π.χ. Προκαταβολή, 1η δόση..."/></div>
+    <div class="fg"><label>Ποσό (€)</label><input id="rAmount" type="number" placeholder="π.χ. 12504"/></div>
+    <div class="fg"><label>Σημείωση</label><input id="rNote" placeholder="π.χ. Προκαταβολή 20%, 2η δόση..."/></div>
     <div class="mbtns">
       <button class="mbtn2" onclick="closeReceiptModal()">Ακύρωση</button>
       <button class="mbtn-blue" onclick="saveReceipt()">💳 Καταχώρηση</button>
     </div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="overlay" id="scheduleModal" style="display:none">
+  <div class="modal" style="border-top-color:var(--green);max-width:600px">
+    <h3 style="color:var(--green)">🗓️ ΠΡΟΓΡΑΜΜΑ ΔΟΣΕΩΝ</h3>
+    <div id="scheduleContent"></div>
+    <div class="mbtns" id="scheduleBtns"></div>
   </div>
 </div>
 
@@ -216,6 +246,7 @@
 
 <script>
 let projects = {}, currentProject = null, history = [], loading = false, currentTab = 'projects';
+let paymentSchedules = {};
 
 async function dbCall(type, data) {
   const res = await fetch('/api/sheets', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type,data}) });
@@ -241,9 +272,11 @@ function buildSystem() {
     const totalExp = cp.expenses.reduce((a,e)=>a+Number(e.amount),0);
     const totalRec = (cp.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
     const bud = Number(cp.budget)||0;
-    ctx = `\n## ΕΝΕΡΓΟ ΕΡΓΟΤΑΞΙΟ\n- Όνομα: ${cp.name}\n- Πελάτης: ${cp.client}\n- Συνολικό κόστος έργου: ${bud?'€'+bud.toLocaleString('el-GR'):'Μη ορισμένο'}\n- Φάση: ${cp.phase}\n- Συνολικά Έξοδα: €${totalExp.toLocaleString('el-GR')}\n- Συνολικές Εισπράξεις: €${totalRec.toLocaleString('el-GR')}\n- Υπόλοιπο πελάτη: ${bud?'€'+(bud-totalRec).toLocaleString('el-GR'):'N/A'}\n- Κέρδος (Εισπράξεις-Έξοδα): €${(totalRec-totalExp).toLocaleString('el-GR')}\n\n### Πληρωμές εξόδων:\n${cp.expenses.length?cp.expenses.map(e=>`• ${e.date} | ${e.category} | ${e.recipient} | €${Number(e.amount).toLocaleString('el-GR')}${e.note?' | '+e.note:''}`).join('\n'):'(καμία)'}\n\n### Εισπράξεις από πελάτη:\n${(cp.receipts||[]).length?(cp.receipts||[]).map(r=>`• ${r.date} | €${Number(r.amount).toLocaleString('el-GR')}${r.note?' | '+r.note:''}`).join('\n'):'(καμία)'}\n\n### Εργασίες:\n${cp.tasks.length?cp.tasks.map(t=>`• [${t.done?'✓':'○'}] ${t.name} | ${t.assignee||'-'} | ${t.deadline||'-'}`).join('\n'):'(καμία)'}`;
+    const schedule = paymentSchedules[currentProject] || [];
+    const scheduleInfo = schedule.length ? '\n\n### Πρόγραμμα Δόσεων:\n' + schedule.map(p=>`• ${p.description} | €${Number(p.amount).toLocaleString('el-GR')} | ${p.due_date} | ${p.paid?'✅ Πληρώθηκε':'⏳ Εκκρεμεί'}`).join('\n') : '';
+    ctx = `\n## ΕΝΕΡΓΟ ΕΡΓΟΤΑΞΙΟ\n- Όνομα: ${cp.name}\n- Πελάτης: ${cp.client}\n- Συνολικό κόστος: ${bud?'€'+bud.toLocaleString('el-GR'):'Μη ορισμένο'}\n- Φάση: ${cp.phase||'Προετοιμασία'}\n- Έξοδα: €${totalExp.toLocaleString('el-GR')}\n- Εισπράξεις: €${totalRec.toLocaleString('el-GR')}\n- Υπόλοιπο πελάτη: ${bud?'€'+(bud-totalRec).toLocaleString('el-GR'):'N/A'}\n- Κέρδος: €${(totalRec-totalExp).toLocaleString('el-GR')}\n\n### Πληρωμές εξόδων:\n${cp.expenses.length?cp.expenses.map(e=>`• ${e.date} | ${e.category} | ${e.recipient} | €${Number(e.amount).toLocaleString('el-GR')}`).join('\n'):'(καμία)'}\n\n### Εισπράξεις:\n${(cp.receipts||[]).length?(cp.receipts||[]).map(r=>`• ${r.date} | €${Number(r.amount).toLocaleString('el-GR')}${r.note?' | '+r.note:''}`).join('\n'):'(καμία)'}${scheduleInfo}\n\n### Εργασίες:\n${cp.tasks.length?cp.tasks.map(t=>`• [${t.done?'✓':'○'}] ${t.name} | ${t.assignee||'-'} | ${t.deadline||'-'}`).join('\n'):'(καμία)'}`;
   } else ctx = '\nΔεν έχει επιλεγεί εργοτάξιο.';
-  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, εισπράξεων, εργασιών, reports, emails, υπολογισμοί.\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή/έξοδο, ΠΑΝΤΑ πρόσθεσε:\nSAVE_EXPENSE:{"category":"[κατ]","recipient":"[παρ]","amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει είσπραξη/προκαταβολή από πελάτη, ΠΑΝΤΑ πρόσθεσε:\nSAVE_RECEIPT:{"amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει εργασία, ΠΑΝΤΑ πρόσθεσε:\nSAVE_TASK:{"name":"[όνομα]","assignee":"[υπεύθ]","deadline":"[προθ]"}\n\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
+  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, εισπράξεων, εργασιών, reports, emails, υπολογισμοί.\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή/έξοδο:\nSAVE_EXPENSE:{"category":"[κατ]","recipient":"[παρ]","amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει είσπραξη:\nSAVE_RECEIPT:{"amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει εργασία:\nSAVE_TASK:{"name":"[όνομα]","assignee":"[υπεύθ]","deadline":"[προθ]"}\n\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
 }
 
 async function init() {
@@ -262,6 +295,8 @@ async function init() {
       const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
       const bud = Number(p.budget)||0;
       addAI(`📂 Καλώς ήρθες!\n\nΕνεργό: **"${p.name}"** | ${p.client}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
+      // Load payment schedule
+      loadPaymentSchedule(firstId);
     } else {
       addAI('👋 Καλώς ήρθες! Πάτα **"+ Έργο"** για να ξεκινήσεις!');
     }
@@ -269,6 +304,13 @@ async function init() {
     document.getElementById('chat').innerHTML='';
     addAI('⚠️ Σφάλμα σύνδεσης. Δοκίμασε να ανανεώσεις.');
   }
+}
+
+async function loadPaymentSchedule(projectId) {
+  try {
+    const data = await dbCall('load_payment_schedule', { projectId });
+    paymentSchedules[projectId] = data.payments || [];
+  } catch(e) {}
 }
 
 function refreshSelect() {
@@ -288,6 +330,181 @@ function openReceiptModal() {
 }
 function closeReceiptModal() { document.getElementById('receiptModal').style.display='none'; }
 
+// SCHEDULE
+function openScheduleModal() {
+  if (!currentProject) { alert('Επέλεξε πρώτα ένα έργο!'); return; }
+  const schedule = paymentSchedules[currentProject] || [];
+  if (schedule.length > 0) {
+    showExistingSchedule(schedule);
+  } else {
+    showNewScheduleForm();
+  }
+  document.getElementById('scheduleModal').style.display='flex';
+}
+function closeScheduleModal() { document.getElementById('scheduleModal').style.display='none'; }
+
+function showNewScheduleForm() {
+  const p = projects[currentProject];
+  const bud = Number(p.budget)||0;
+  const content = document.getElementById('scheduleContent');
+  const btns = document.getElementById('scheduleBtns');
+
+  // Default payment plan: 20-20-30-20-10
+  const defaultPlan = [
+    {pct:20, desc:'Προκαταβολή', days:0},
+    {pct:20, desc:'2η Δόση (25η μέρα)', days:25},
+    {pct:30, desc:'3η Δόση (55η μέρα)', days:55},
+    {pct:20, desc:'4η Δόση (85η μέρα)', days:85},
+    {pct:10, desc:'Τελική Δόση (Παράδοση)', days:120},
+  ];
+
+  const today = new Date().toISOString().split('T')[0];
+
+  content.innerHTML = `
+    <div class="schedule-summary">
+      📁 <strong>${p.name}</strong> | Κόστος: <strong>€${bud.toLocaleString('el-GR')}</strong>
+    </div>
+    <div class="fg"><label>Ημερομηνία Έναρξης</label><input type="date" id="schedStartDate" value="${p.start_date||today}" onchange="updateScheduleAmounts()"/></div>
+    <div style="margin-bottom:12px;font-size:12px;color:var(--dim);text-transform:uppercase;font-weight:600;letter-spacing:.5px;">Δόσεις</div>
+    ${defaultPlan.map((d,i) => `
+      <div class="schedule-row">
+        <input class="pct" type="number" id="spct${i}" value="${d.pct}" onchange="updateScheduleAmounts()" placeholder="%"/> 
+        <span style="color:var(--dim);font-size:13px">%</span>
+        <input class="desc" type="text" id="sdesc${i}" value="${d.desc}" placeholder="Περιγραφή"/>
+        <input type="number" id="sdays${i}" value="${d.days}" style="width:70px" placeholder="Μέρες"/>
+        <input class="amt" type="text" id="samt${i}" value="€${Math.round(bud*d.pct/100).toLocaleString('el-GR')}" readonly style="color:var(--accent);font-weight:600;background:transparent;border-color:transparent;"/>
+      </div>`).join('')}
+    <div id="schedTotal" style="text-align:right;font-size:13px;color:var(--dim);margin-top:8px;"></div>
+  `;
+
+  btns.innerHTML = `
+    <button class="mbtn2" onclick="closeScheduleModal()">Ακύρωση</button>
+    <button class="mbtn-green" onclick="saveSchedule()">💾 Αποθήκευση Προγράμματος</button>
+  `;
+  updateScheduleAmounts();
+}
+
+function updateScheduleAmounts() {
+  const p = projects[currentProject];
+  const bud = Number(p.budget)||0;
+  let total = 0;
+  for(let i=0;i<5;i++) {
+    const pct = Number(document.getElementById('spct'+i)?.value)||0;
+    const amt = Math.round(bud*pct/100);
+    total += amt;
+    const el = document.getElementById('samt'+i);
+    if(el) el.value = '€'+amt.toLocaleString('el-GR');
+  }
+  const totalEl = document.getElementById('schedTotal');
+  if(totalEl) {
+    const diff = total - bud;
+    totalEl.innerHTML = `Σύνολο: <strong style="color:${Math.abs(diff)<1?'var(--green)':'var(--red)'}"}>€${total.toLocaleString('el-GR')}</strong>${Math.abs(diff)>1?' (διαφορά: €'+diff.toLocaleString('el-GR')+')':''}`;
+  }
+}
+
+async function saveSchedule() {
+  const p = projects[currentProject];
+  const bud = Number(p.budget)||0;
+  const startDate = document.getElementById('schedStartDate').value;
+  if (!startDate) { alert('Βάλε ημερομηνία έναρξης!'); return; }
+
+  const payments = [];
+  for(let i=0;i<5;i++) {
+    const pct = Number(document.getElementById('spct'+i)?.value)||0;
+    const desc = document.getElementById('sdesc'+i)?.value||'';
+    const days = Number(document.getElementById('sdays'+i)?.value)||0;
+    if(pct > 0) {
+      const dueDate = new Date(startDate);
+      dueDate.setDate(dueDate.getDate() + days);
+      payments.push({
+        id: 'pay'+Date.now()+i,
+        projectId: currentProject,
+        description: desc,
+        percentage: pct,
+        amount: Math.round(bud*pct/100),
+        dueDate: dueDate.toLocaleDateString('el-GR'),
+        paid: false
+      });
+    }
+  }
+
+  try {
+    await dbCall('save_payment_schedule', { payments });
+    paymentSchedules[currentProject] = payments.map(p=>({...p, due_date:p.dueDate, project_id:p.projectId}));
+    showToast('✅ Πρόγραμμα αποθηκεύτηκε!');
+    showExistingSchedule(paymentSchedules[currentProject]);
+  } catch(e) { alert('Σφάλμα αποθήκευσης!'); }
+}
+
+function showExistingSchedule(schedule) {
+  const p = projects[currentProject];
+  const bud = Number(p.budget)||0;
+  const today = new Date();
+  const content = document.getElementById('scheduleContent');
+  const btns = document.getElementById('scheduleBtns');
+
+  const totalPaid = schedule.filter(s=>s.paid).reduce((a,s)=>a+Number(s.amount),0);
+  const totalPending = schedule.filter(s=>!s.paid).reduce((a,s)=>a+Number(s.amount),0);
+
+  content.innerHTML = `
+    <div class="schedule-summary">
+      📁 <strong>${p.name}</strong> | Κόστος: €${bud.toLocaleString('el-GR')}<br>
+      ✅ Εισπραχθέντα: <strong style="color:var(--green)">€${totalPaid.toLocaleString('el-GR')}</strong> | 
+      ⏳ Εκκρεμή: <strong style="color:var(--orange)">€${totalPending.toLocaleString('el-GR')}</strong>
+    </div>
+    ${schedule.map(s => {
+      const dueDate = parseGreekDate(s.due_date);
+      const isOverdue = !s.paid && dueDate && dueDate < today;
+      const isUpcoming = !s.paid && dueDate && dueDate >= today && (dueDate - today) < 7*24*60*60*1000;
+      let cls = s.paid ? 'paid' : isOverdue ? 'overdue' : isUpcoming ? 'upcoming' : '';
+      let badge = s.paid ? '<span class="badge badge-paid">✅ Πληρώθηκε</span>' : isOverdue ? '<span class="badge badge-overdue">⚠️ Εκπρόθεσμη</span>' : isUpcoming ? '<span class="badge badge-upcoming">🔔 Σύντομα</span>' : '';
+      return `
+        <div class="payment-row ${cls}">
+          <div class="payment-info">
+            <div class="payment-desc">${s.description}${badge}</div>
+            <div class="payment-meta">${s.percentage}% · Προθεσμία: ${s.due_date}${s.paid&&s.paid_date?' · Πληρώθηκε: '+s.paid_date:''}</div>
+          </div>
+          <div class="payment-amount">€${Number(s.amount).toLocaleString('el-GR')}</div>
+          ${!s.paid ? `<button class="btn-paid" onclick="markPaid('${s.id}')">💳 Εισπράχθηκε</button>` : ''}
+        </div>`;
+    }).join('')}
+  `;
+
+  btns.innerHTML = `
+    <button class="mbtn2" onclick="closeScheduleModal()">Κλείσιμο</button>
+    <button class="mbtn2" onclick="showNewScheduleForm()">✏️ Επεξεργασία</button>
+  `;
+}
+
+function parseGreekDate(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split('/');
+  if (parts.length === 3) return new Date(parts[2], parts[1]-1, parts[0]);
+  return null;
+}
+
+async function markPaid(paymentId) {
+  const schedule = paymentSchedules[currentProject] || [];
+  const payment = schedule.find(p=>p.id===paymentId);
+  if (!payment) return;
+  const today = new Date().toLocaleDateString('el-GR');
+  try {
+    await dbCall('update_payment', { id: paymentId, paid: true, paidDate: today });
+    payment.paid = true;
+    payment.paid_date = today;
+    const amount = Number(payment.amount);
+    // Auto-save as receipt
+    const receiptId = 'r'+Date.now();
+    const receipt = {id:receiptId, projectId:currentProject, date:today, amount, note:payment.description};
+    if (!projects[currentProject].receipts) projects[currentProject].receipts=[];
+    projects[currentProject].receipts.push(receipt);
+    await dbCall('save_receipt', receipt);
+    showToast('💳 Δόση εισπράχθηκε και καταχωρήθηκε!');
+    showExistingSchedule(schedule);
+    addAI(`💳 Δόση **"${payment.description}"** εισπράχθηκε!\n\nΠοσό: €${amount.toLocaleString('el-GR')}\nΗμερομηνία: ${today}`);
+  } catch(e) { alert('Σφάλμα!'); }
+}
+
 async function saveReceipt() {
   const amount = Number(document.getElementById('rAmount').value);
   if (!amount) { alert('Βάλε ποσό!'); return; }
@@ -296,10 +513,7 @@ async function saveReceipt() {
   const receipt = { id, projectId: currentProject, date: new Date().toLocaleDateString('el-GR'), amount, note };
   if (!projects[currentProject].receipts) projects[currentProject].receipts = [];
   projects[currentProject].receipts.push(receipt);
-  try {
-    await dbCall('save_receipt', receipt);
-    showToast('💳 Είσπραξη αποθηκεύτηκε!');
-  } catch(e) {}
+  try { await dbCall('save_receipt', receipt); showToast('💳 Είσπραξη αποθηκεύτηκε!'); } catch(e) {}
   closeReceiptModal();
   document.getElementById('rAmount').value = '';
   document.getElementById('rNote').value = '';
@@ -313,13 +527,14 @@ async function createProj() {
   const name = document.getElementById('fName').value.trim();
   if (!name) { alert('Δώσε όνομα!'); return; }
   const id = 'p'+Date.now();
-  const p = { id, name, client:document.getElementById('fClient').value.trim()||'Άγνωστος', budget:document.getElementById('fBudget').value||0, phase:document.getElementById('fPhase').value, expenses:[], tasks:[], receipts:[] };
+  const startDate = document.getElementById('fStartDate').value;
+  const p = { id, name, client:document.getElementById('fClient').value.trim()||'Άγνωστος', budget:document.getElementById('fBudget').value||0, phase:'Προετοιμασία', start_date:startDate, expenses:[], tasks:[], receipts:[] };
   projects[id] = p;
   try { await dbCall('save_project', p); showToast('✅ Έργο αποθηκεύτηκε!'); } catch(e){}
   currentProject = id; refreshSelect(); closeModal();
-  ['fName','fClient','fBudget'].forEach(i=>document.getElementById(i).value='');
+  ['fName','fClient','fBudget','fStartDate'].forEach(i=>document.getElementById(i).value='');
   history = [];
-  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΣυνολικό κόστος: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
+  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client}${p.budget?'\nΣυνολικό κόστος: €'+Number(p.budget).toLocaleString('el-GR'):''}${startDate?'\nΈναρξη: '+new Date(startDate).toLocaleDateString('el-GR'):''}\n\nΘέλεις να ορίσω αυτόματα πρόγραμμα δόσεων;`);
 }
 
 function switchProj() {
@@ -330,7 +545,8 @@ function switchProj() {
     const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
     const bud = Number(p.budget)||0;
     history = [];
-    addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client} | Φάση: ${p.phase}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
+    addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
+    loadPaymentSchedule(currentProject);
   }
 }
 
@@ -355,9 +571,9 @@ function renderTab(tab) {
       return `<div class="manage-item">
         <div>
           <div class="manage-item-name">📁 ${p.name}</div>
-          <div class="manage-item-sub">${p.client} · Κόστος: €${bud.toLocaleString('el-GR')} · Εισπράξεις: €${totRec.toLocaleString('el-GR')} · Υπόλοιπο: €${(bud-totRec).toLocaleString('el-GR')}</div>
+          <div class="manage-item-sub">${p.client} · €${bud.toLocaleString('el-GR')} · Εισπράξεις: €${totRec.toLocaleString('el-GR')} · Υπόλοιπο: €${(bud-totRec).toLocaleString('el-GR')}</div>
         </div>
-        <button class="btn-del" onclick="deleteItem('project','${p.id}')">🗑️ Διαγραφή</button>
+        <button class="btn-del" onclick="deleteItem('project','${p.id}')">🗑️</button>
       </div>`;
     }).join('');
   } else if (tab === 'expenses') {
@@ -369,7 +585,7 @@ function renderTab(tab) {
           <div class="manage-item-name">💰 €${Number(e.amount).toLocaleString('el-GR')} — ${e.recipient||e.category}</div>
           <div class="manage-item-sub">${e.projName} · ${e.date} · ${e.category}</div>
         </div>
-        <button class="btn-del" onclick="deleteItem('expense','${e.id}')">🗑️ Διαγραφή</button>
+        <button class="btn-del" onclick="deleteItem('expense','${e.id}')">🗑️</button>
       </div>`).join('');
   } else if (tab === 'receipts') {
     const all = Object.values(projects).flatMap(p=>(p.receipts||[]).map(r=>({...r,projName:p.name})));
@@ -380,7 +596,7 @@ function renderTab(tab) {
           <div class="manage-item-name">💳 €${Number(r.amount).toLocaleString('el-GR')}${r.note?' — '+r.note:''}</div>
           <div class="manage-item-sub">${r.projName} · ${r.date}</div>
         </div>
-        <button class="btn-del" onclick="deleteItem('receipt','${r.id}')">🗑️ Διαγραφή</button>
+        <button class="btn-del" onclick="deleteItem('receipt','${r.id}')">🗑️</button>
       </div>`).join('');
   } else {
     const all = Object.values(projects).flatMap(p=>(p.tasks||[]).map(t=>({...t,projName:p.name})));
@@ -391,13 +607,13 @@ function renderTab(tab) {
           <div class="manage-item-name">${t.done?'✅':'⏳'} ${t.name}</div>
           <div class="manage-item-sub">${t.projName} · ${t.assignee||'-'} · ${t.deadline||'-'}</div>
         </div>
-        <button class="btn-del" onclick="deleteItem('task','${t.id}')">🗑️ Διαγραφή</button>
+        <button class="btn-del" onclick="deleteItem('task','${t.id}')">🗑️</button>
       </div>`).join('');
   }
 }
 
 async function deleteItem(table, id) {
-  if (!confirm('Διαγραφή αυτού του στοιχείου;')) return;
+  if (!confirm('Διαγραφή;')) return;
   try {
     await dbCall('delete', {table, id});
     if (table==='project') { delete projects[id]; if(currentProject===id) currentProject=null; refreshSelect(); }
@@ -507,16 +723,17 @@ async function send(txt) {
 }
 
 function qa(type) {
-  const map={'πληρωμή':'Πληρωμή: ','εργασία':'Πρόσθεσε εργασία: ','report':'Δώσε μου report με έξοδα, εισπράξεις και κατάσταση έργου.','email':'Email για τον πελάτη: ','χρονοδιάγραμμα':'Φτιάξε χρονοδιάγραμμα εργασιών.','κόστος':'Υπολόγισε κόστος για: '};
+  const map={'πληρωμή':'Πληρωμή: ','εργασία':'Πρόσθεσε εργασία: ','report':'Δώσε μου πλήρες report με έξοδα, εισπράξεις, δόσεις και κατάσταση έργου.','email':'Email για τον πελάτη: ','χρονοδιάγραμμα':'Φτιάξε χρονοδιάγραμμα εργασιών.','κόστος':'Υπολόγισε κόστος για: '};
   const inp=document.getElementById('inp'); inp.value=map[type]||''; inp.focus(); resize(inp);
 }
-function ex(text) { send(text); }
+function ex(text) { if(text) send(text); }
 function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
 function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,130)+'px'; }
 
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal')closeModal(); });
 document.getElementById('manageModal').addEventListener('click',e=>{ if(e.target.id==='manageModal')closeManage(); });
 document.getElementById('receiptModal').addEventListener('click',e=>{ if(e.target.id==='receiptModal')closeReceiptModal(); });
+document.getElementById('scheduleModal').addEventListener('click',e=>{ if(e.target.id==='scheduleModal')closeScheduleModal(); });
 
 init();
 </script>

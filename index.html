@@ -114,7 +114,7 @@
 <main id="chat">
   <div class="welcome">
     <h2>ΚΑΛΩΣ ΗΡΘΕΣ, ΕΡΓΟΛΑΒΕ</h2>
-    <p>Είμαι ο ψηφιακός σου βοηθός για ανακαινίσεις. Τα δεδομένα σου αποθηκεύονται στο Google Sheets — ασφαλή και προσβάσιμα από παντού.</p>
+    <p>Είμαι ο ψηφιακός σου βοηθός για ανακαινίσεις. Τα δεδομένα σου αποθηκεύονται μόνιμα — ασφαλή και προσβάσιμα από παντού.</p>
     <div class="grid">
       <div class="chip" onclick="ex('Κατέγραψε πληρωμή 850€ σε Γιώργη ελαιοχρωματιστή για χρώματα σαλονιού')"><span>💰</span>Καταχώρηση πληρωμής</div>
       <div class="chip" onclick="ex('Ποιες εργασίες εκκρεμούν;')"><span>📋</span>Εκκρεμείς εργασίες</div>
@@ -131,7 +131,7 @@
     <textarea id="inp" rows="1" placeholder="Γράψε ό,τι χρειάζεσαι..." onkeydown="onKey(event)" oninput="resize(this)"></textarea>
     <button class="send" id="sendBtn" onclick="send()">➤</button>
   </div>
-  <div class="fnote"><span class="sdot"></span>Claude AI · Google Sheets · Αποθηκεύεται αυτόματα</div>
+  <div class="fnote"><span class="sdot"></span>Claude AI · Supabase · Αποθηκεύεται αυτόματα</div>
 </footer>
 
 <div class="toast" id="toast">✅ Αποθηκεύτηκε!</div>
@@ -196,11 +196,11 @@ function buildSystem() {
   } else {
     ctx = '\nΔεν έχει επιλεγεί εργοτάξιο.';
   }
-  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, διαχείριση εργασιών, reports, emails πελατών, υπολογισμοί κόστους, χρονοδιαγράμματα.\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
+  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, διαχείριση εργασιών, reports, emails πελατών, υπολογισμοί κόστους, χρονοδιαγράμματα.\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.\n\nΌΤΑΝ ΚΑΤΑΧΩΡΕΙΣ ΕΞΟΔΟ: Στο τέλος της απάντησής σου πρόσθεσε ΠΑΝΤΑ μια γραμμή:\nSAVE_EXPENSE:{"category":"...","recipient":"...","amount":ΠΟΣΟ,"note":"..."}\n\nΌΤΑΝ ΚΑΤΑΧΩΡΕΙΣ ΕΡΓΑΣΙΑ: Στο τέλος πρόσθεσε:\nSAVE_TASK:{"name":"...","assignee":"...","deadline":"..."}`;
 }
 
 async function init() {
-  addAI('⏳ Φορτώνω τα έργα σου από Google Sheets...');
+  addAI('⏳ Φορτώνω τα έργα σου...');
   try {
     const data = await sheetsCall('load_projects');
     projects = data.projects || {};
@@ -218,7 +218,7 @@ async function init() {
     }
   } catch(e) {
     document.getElementById('chat').innerHTML = '';
-    addAI('⚠️ Δεν μπόρεσα να συνδεθώ με το Google Sheets. Έλεγξε τις ρυθμίσεις.');
+    addAI('⚠️ Δεν μπόρεσα να συνδεθώ. Έλεγξε τις ρυθμίσεις.');
   }
 }
 
@@ -242,14 +242,14 @@ async function createProj() {
   projects[id] = p;
   try {
     await sheetsCall('save_project', p);
-    showToast('✅ Έργο αποθηκεύτηκε στο Google Sheets!');
+    showToast('✅ Έργο αποθηκεύτηκε!');
   } catch(e) { console.error(e); }
   currentProject = id;
   refreshSelect();
   closeModal();
   ['fName','fClient','fBudget'].forEach(i=>document.getElementById(i).value='');
   history = [];
-  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε και αποθηκεύτηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
+  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
 }
 
 function switchProj() {
@@ -269,8 +269,50 @@ function addUser(text) {
 }
 
 function addAI(text) {
+  // Check for SAVE commands
+  const expMatch = text.match(/SAVE_EXPENSE:(\{[^}]+\})/);
+  const taskMatch = text.match(/SAVE_TASK:(\{[^}]+\})/);
+
+  if (expMatch && currentProject) {
+    try {
+      const expData = JSON.parse(expMatch[1]);
+      const expense = {
+        id: 'e'+Date.now(),
+        projectId: currentProject,
+        date: new Date().toLocaleDateString('el-GR'),
+        category: expData.category || 'Γενικά',
+        recipient: expData.recipient || 'Άγνωστος',
+        amount: Number(expData.amount) || 0,
+        note: expData.note || ''
+      };
+      if (!projects[currentProject].expenses) projects[currentProject].expenses = [];
+      projects[currentProject].expenses.push(expense);
+      sheetsCall('save_expense', expense).then(() => showToast('💰 Έξοδο αποθηκεύτηκε!'));
+    } catch(e) { console.error('Save expense error:', e); }
+  }
+
+  if (taskMatch && currentProject) {
+    try {
+      const taskData = JSON.parse(taskMatch[1]);
+      const task = {
+        id: 't'+Date.now(),
+        projectId: currentProject,
+        name: taskData.name || 'Εργασία',
+        assignee: taskData.assignee || '',
+        deadline: taskData.deadline || '',
+        done: false
+      };
+      if (!projects[currentProject].tasks) projects[currentProject].tasks = [];
+      projects[currentProject].tasks.push(task);
+      sheetsCall('save_task', task).then(() => showToast('🔨 Εργασία αποθηκεύτηκε!'));
+    } catch(e) { console.error('Save task error:', e); }
+  }
+
+  // Remove SAVE commands from displayed text
+  const cleanText = text.replace(/SAVE_EXPENSE:\{[^}]+\}/g, '').replace(/SAVE_TASK:\{[^}]+\}/g, '').trim();
+
   const d=document.createElement('div'); d.className='msg';
-  d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai">${fmt(text)}</div>`;
+  d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai">${fmt(cleanText)}</div>`;
   document.getElementById('chat').appendChild(d); scroll();
 }
 

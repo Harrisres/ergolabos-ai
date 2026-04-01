@@ -25,7 +25,14 @@ export default async function handler(req, res) {
 
   try {
     const { type, data } = req.body;
-
+    if (type === 'save_receipt') {
+      const receiptRes = await fetch(`${SUPABASE_URL}/rest/v1/receipts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ id: data.id, project_id: data.projectId, date: data.date, amount: data.amount, note: data.note || '' })
+      });
+      return res.status(200).json({ ok: receiptRes.ok });
+    }
     if (type === 'load_projects') {
       const [projects, expenses, tasks] = await Promise.all([
         supabase('GET', 'projects', null, '?select=*'),

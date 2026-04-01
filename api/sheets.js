@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     if (type === 'save_project') {
       await supabase('POST', 'projects', {
         id: data.id, name: data.name, client: data.client,
-        budget: data.budget, phase: data.phase
+        budget: data.budget, phase: data.phase, start_date: data.start_date || ''
       });
       return res.status(200).json({ ok: true });
     }

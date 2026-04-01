@@ -90,7 +90,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    if (type === 'save_payment_schedule') {
+   if (type === 'save_payment_schedule') {
+      // Διέγραψε παλιό πρόγραμμα πρώτα
+      await deleteByProjectId('payment_schedule', data.payments[0].projectId);
       for (const payment of data.payments) {
         await supabase('POST', 'payment_schedule', {
           id: payment.id,

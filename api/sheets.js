@@ -25,29 +25,26 @@ export default async function handler(req, res) {
 
   try {
     const { type, data } = req.body;
-    if (type === 'save_receipt') {
-      const receiptRes = await fetch(`${SUPABASE_URL}/rest/v1/receipts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ id: data.id, project_id: data.projectId, date: data.date, amount: data.amount, note: data.note || '' })
-      });
-      return res.status(200).json({ ok: receiptRes.ok });
-    }
+
     if (type === 'load_projects') {
-      const [projects, expenses, tasks] = await Promise.all([
+      const [projects, expenses, tasks, receipts] = await Promise.all([
         supabase('GET', 'projects', null, '?select=*'),
         supabase('GET', 'expenses', null, '?select=*'),
         supabase('GET', 'tasks', null, '?select=*'),
+        supabase('GET', 'receipts', null, '?select=*'),
       ]);
       const result = {};
       (projects || []).forEach(p => {
-        result[p.id] = { ...p, expenses: [], tasks: [] };
+        result[p.id] = { ...p, expenses: [], tasks: [], receipts: [] };
       });
       (expenses || []).forEach(e => {
         if (result[e.project_id]) result[e.project_id].expenses.push(e);
       });
       (tasks || []).forEach(t => {
         if (result[t.project_id]) result[t.project_id].tasks.push(t);
+      });
+      (receipts || []).forEach(r => {
+        if (result[r.project_id]) result[r.project_id].receipts.push(r);
       });
       return res.status(200).json({ projects: result });
     }
@@ -77,13 +74,21 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: true });
     }
+
+    if (type === 'save_receipt') {
+      await supabase('POST', 'receipts', {
+        id: data.id, project_id: data.projectId, date: data.date,
+        amount: data.amount, note: data.note || ''
+      });
+      return res.status(200).json({ ok: true });
+    }
+
     if (type === 'delete') {
       const { table, id } = data;
-      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks' };
+      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks', receipt: 'receipts' };
       const supaTable = tableMap[table];
       if (!supaTable) return res.status(400).json({ error: 'invalid table' });
 
-      // Αν διαγράφεται έργο, διέγραψε πρώτα έξοδα και εργασίες
       if (table === 'project') {
         await Promise.all([
           fetch(`${SUPABASE_URL}/rest/v1/expenses?project_id=eq.${id}`, {
@@ -91,6 +96,10 @@ export default async function handler(req, res) {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
           }),
           fetch(`${SUPABASE_URL}/rest/v1/tasks?project_id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          }),
+          fetch(`${SUPABASE_URL}/rest/v1/receipts?project_id=eq.${id}`, {
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
           })
@@ -103,6 +112,7 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: delRes.ok });
     }
+
     return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {

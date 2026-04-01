@@ -100,6 +100,10 @@ export default async function handler(req, res) {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
           }),
           fetch(`${SUPABASE_URL}/rest/v1/receipts?project_id=eq.${id}`, {
+            fetch(`${SUPABASE_URL}/rest/v1/payment_schedule?project_id=eq.${id}`, {
+  method: 'DELETE',
+  headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+}),
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
           })
@@ -112,7 +116,35 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: delRes.ok });
     }
+    if (type === 'save_payment_schedule') {
+      for (const payment of data.payments) {
+        await supabase('POST', 'payment_schedule', {
+          id: payment.id,
+          project_id: payment.projectId,
+          description: payment.description,
+          percentage: payment.percentage,
+          amount: payment.amount,
+          due_date: payment.dueDate,
+          paid: false,
+          paid_date: ''
+        });
+      }
+      return res.status(200).json({ ok: true });
+    }
 
+    if (type === 'update_payment') {
+      const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/payment_schedule?id=eq.${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ paid: data.paid, paid_date: data.paidDate || '' })
+      });
+      return res.status(200).json({ ok: updateRes.ok });
+    }
+
+    if (type === 'load_payment_schedule') {
+      const payments = await supabase('GET', 'payment_schedule', null, `?project_id=eq.${data.projectId}&select=*`);
+      return res.status(200).json({ payments: payments || [] });
+    }
     return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {

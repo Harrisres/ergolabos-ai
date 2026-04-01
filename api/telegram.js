@@ -149,4 +149,3 @@ SAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσ
   } catch(e) {
     return res.status(500).json({ error: e.message });
   }
-}

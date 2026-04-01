@@ -17,6 +17,13 @@ async function supabase(method, table, body, query) {
   return res.ok;
 }
 
+async function deleteByProjectId(table, id) {
+  return fetch(`${SUPABASE_URL}/rest/v1/${table}?project_id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -83,39 +90,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    if (type === 'delete') {
-      const { table, id } = data;
-      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks', receipt: 'receipts' };
-      const supaTable = tableMap[table];
-      if (!supaTable) return res.status(400).json({ error: 'invalid table' });
-
-      if (table === 'project') {
-        await Promise.all([
-          fetch(`${SUPABASE_URL}/rest/v1/expenses?project_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }),
-          fetch(`${SUPABASE_URL}/rest/v1/tasks?project_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }),
-          fetch(`${SUPABASE_URL}/rest/v1/receipts?project_id=eq.${id}`, {
-            fetch(`${SUPABASE_URL}/rest/v1/payment_schedule?project_id=eq.${id}`, {
-  method: 'DELETE',
-  headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-}),
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          })
-        ]);
-      }
-
-      const delRes = await fetch(`${SUPABASE_URL}/rest/v1/${supaTable}?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      });
-      return res.status(200).json({ ok: delRes.ok });
-    }
     if (type === 'save_payment_schedule') {
       for (const payment of data.payments) {
         await supabase('POST', 'payment_schedule', {
@@ -145,6 +119,29 @@ export default async function handler(req, res) {
       const payments = await supabase('GET', 'payment_schedule', null, `?project_id=eq.${data.projectId}&select=*`);
       return res.status(200).json({ payments: payments || [] });
     }
+
+    if (type === 'delete') {
+      const { table, id } = data;
+      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks', receipt: 'receipts' };
+      const supaTable = tableMap[table];
+      if (!supaTable) return res.status(400).json({ error: 'invalid table' });
+
+      if (table === 'project') {
+        await Promise.all([
+          deleteByProjectId('expenses', id),
+          deleteByProjectId('tasks', id),
+          deleteByProjectId('receipts', id),
+          deleteByProjectId('payment_schedule', id),
+        ]);
+      }
+
+      const delRes = await fetch(`${SUPABASE_URL}/rest/v1/${supaTable}?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      return res.status(200).json({ ok: delRes.ok });
+    }
+
     return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {

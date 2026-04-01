@@ -75,12 +75,24 @@ export default async function handler(req, res) {
       const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks' };
       const supaTable = tableMap[table];
       if (!supaTable) return res.status(400).json({ error: 'invalid table' });
+
+      // Αν διαγράφεται έργο, διέγραψε πρώτα έξοδα και εργασίες
+      if (table === 'project') {
+        await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/expenses?project_id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          }),
+          fetch(`${SUPABASE_URL}/rest/v1/tasks?project_id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          })
+        ]);
+      }
+
       const delRes = await fetch(`${SUPABASE_URL}/rest/v1/${supaTable}?id=eq.${id}`, {
         method: 'DELETE',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`
-        }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       });
       return res.status(200).json({ ok: delRes.ok });
     }

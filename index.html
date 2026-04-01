@@ -13,15 +13,13 @@
     --text:#eef0f5; --dim:#9098b0; --muted:#50576a;
     --ubg:#162216; --uborder:#2a4a2a;
     --aibg:#131625; --aiborder:#232850;
-    --green:#2ecc71; --red:#e74c3c;
+    --green:#2ecc71; --red:#e74c3c; --blue:#3498db;
     --radius:10px; --radius-sm:7px;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100dvh;display:flex;flex-direction:column;overflow:hidden;font-size:15px;}
-
-  /* HEADER */
-  header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:14px;height:100px;flex-shrink:0;}
-  .logo{width:40px;height:40px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;border-radius:8px;flex-shrink:0;font-weight:900;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:14px;height:64px;flex-shrink:0;}
+  .logo{width:40px;height:40px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;border-radius:8px;flex-shrink:0;}
   .htitle{flex:1;}
   .htitle h1{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);line-height:1;}
   .htitle p{font-size:11px;color:var(--dim);margin-top:1px;}
@@ -32,18 +30,14 @@
   .btn-add:hover{background:var(--accent2);}
   .btn-manage{background:var(--surface2);color:var(--dim);border:1px solid var(--border2);padding:9px 12px;font-size:15px;border-radius:var(--radius-sm);cursor:pointer;}
   .btn-manage:hover{border-color:var(--accent);color:var(--accent);}
-
-  /* QUICK ACTIONS */
   .qa{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
   .qa button{background:var(--surface2);border:1px solid var(--border2);color:var(--dim);padding:7px 14px;font-size:13px;font-weight:500;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
   .qa button:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,165,0,0.08);}
-
-  /* MAIN */
-  main{flex:1;overflow-y:auto;padding:50px;display:flex;flex-direction:column;gap:14px;}
+  .qa button.receipt-btn{border-color:rgba(52,152,219,0.4);color:var(--blue);}
+  .qa button.receipt-btn:hover{border-color:var(--blue);background:rgba(52,152,219,0.08);}
+  main{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
   main::-webkit-scrollbar{width:5px;}
   main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-
-  /* WELCOME */
   .welcome{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:22px;}
   .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--accent);margin-bottom:8px;}
   .welcome p{font-size:14px;color:var(--dim);line-height:1.7;}
@@ -51,8 +45,6 @@
   .chip{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--dim);cursor:pointer;line-height:1.5;transition:all .15s;}
   .chip:hover{border-color:var(--accent);color:var(--text);background:rgba(240,165,0,0.06);}
   .chip span{display:block;font-size:18px;margin-bottom:4px;}
-
-  /* MESSAGES */
   .msg{display:flex;gap:12px;animation:fadeUp .25s ease;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
   .msg.user{flex-direction:row-reverse;}
@@ -69,15 +61,11 @@
   .bubble tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
   .bubble ul{padding-left:18px;margin:8px 0;}
   .bubble li{margin:4px 0;}
-
-  /* TYPING */
   .dots{display:flex;gap:5px;padding:5px 0;}
   .dots span{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite;opacity:.8;}
   .dots span:nth-child(2){animation-delay:.2s;}
   .dots span:nth-child(3){animation-delay:.4s;}
   @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-
-  /* FOOTER */
   footer{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;flex-shrink:0;}
   .irow{display:flex;gap:10px;align-items:flex-end;}
   textarea{flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:11px 15px;font-family:'Inter',sans-serif;font-size:14px;border-radius:var(--radius);resize:none;min-height:46px;max-height:130px;outline:none;line-height:1.6;}
@@ -89,8 +77,6 @@
   .fnote{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;}
   .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;vertical-align:middle;margin-right:5px;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-  /* MODALS */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(5px);}
   .modal{background:var(--surface);border:1px solid var(--border2);border-top:3px solid var(--accent);border-radius:var(--radius);padding:28px;width:92%;max-width:480px;max-height:85vh;overflow-y:auto;}
   .modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:20px;}
@@ -103,13 +89,11 @@
   .mbtn1:hover{background:var(--accent2);}
   .mbtn2{background:transparent;color:var(--dim);border:1px solid var(--border2);padding:12px 18px;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
   .mbtn2:hover{color:var(--text);border-color:var(--dim);}
-
-  /* TOAST */
+  .mbtn-blue{flex:1;background:var(--blue);color:#fff;border:none;padding:12px;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;}
+  .mbtn-blue:hover{background:#2980b9;}
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#152515;border:1px solid var(--green);color:#5dca7d;padding:10px 22px;border-radius:25px;font-size:13px;font-weight:600;z-index:200;display:none;}
-
-  /* MANAGE */
-  .tabs{display:flex;gap:5px;margin-bottom:18px;}
-  .tab{background:var(--surface2);border:1px solid var(--border2);color:var(--dim);padding:8px 16px;font-size:13px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
+  .tabs{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;}
+  .tab{background:var(--surface2);border:1px solid var(--border2);color:var(--dim);padding:8px 14px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
   .tab.active{background:var(--accent);color:#000;border-color:var(--accent);}
   .manage-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;}
   .manage-item-name{font-weight:600;font-size:14px;}
@@ -117,15 +101,14 @@
   .btn-del{background:rgba(231,76,60,0.12);color:var(--red);border:1px solid rgba(231,76,60,0.25);padding:6px 12px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;margin-left:12px;white-space:nowrap;}
   .btn-del:hover{background:rgba(231,76,60,0.25);}
   .empty-msg{font-size:13px;color:var(--muted);padding:12px 0;text-align:center;}
-
   @media(max-width:600px){
-    header{padding:0 14px;height:58px;}
-    .qa{padding:8px 14px;}
-    main{padding:14px;}
-    footer{padding:12px 14px;}
-    .proj-wrap select{max-width:120px;}
+    header{padding:0 12px;height:58px;}
+    .qa{padding:8px 12px;}
+    main{padding:12px;}
+    footer{padding:10px 12px;}
+    .proj-wrap select{max-width:110px;}
     .grid{grid-template-columns:1fr 1fr;}
-    .htitle h1{font-size:18px;}
+    .htitle h1{font-size:17px;}
   }
 </style>
 </head>
@@ -153,6 +136,7 @@
   <button onclick="qa('email')">✉️ Email</button>
   <button onclick="qa('χρονοδιάγραμμα')">📅 Χρονοδ/μα</button>
   <button onclick="qa('κόστος')">📋 Κόστος</button>
+  <button class="receipt-btn" onclick="openReceiptModal()">💳 Είσπραξη</button>
 </div>
 
 <main id="chat">
@@ -163,7 +147,7 @@
       <div class="chip" onclick="ex('Κατέγραψε πληρωμή 850€ σε Γιώργη ελαιοχρωματιστή')"><span>💰</span>Καταχώρηση πληρωμής</div>
       <div class="chip" onclick="ex('Ποιες εργασίες εκκρεμούν;')"><span>📋</span>Εκκρεμείς εργασίες</div>
       <div class="chip" onclick="ex('Φτιάξε email για τον πελάτη ότι αρχίζουμε Δευτέρα')"><span>✉️</span>Email σε πελάτη</div>
-      <div class="chip" onclick="ex('Δώσε μου report με όλα τα έξοδα μέχρι σήμερα')"><span>📊</span>Report εξόδων</div>
+      <div class="chip" onclick="ex('Δώσε μου report με όλα τα έξοδα και εισπράξεις μέχρι σήμερα')"><span>📊</span>Report εξόδων</div>
       <div class="chip" onclick="ex('Υπολόγισε κόστος πλακάκια για δωμάτιο 18τμ')"><span>🧮</span>Υπολογισμός κόστους</div>
       <div class="chip" onclick="ex('Πρόσθεσε εργασία: γυψοσανίδα σαλόνι, Νίκος, Παρασκευή')"><span>🔨</span>Νέα εργασία</div>
     </div>
@@ -186,7 +170,7 @@
     <h3>ΝΕΟ ΕΡΓΟΤΑΞΙΟ</h3>
     <div class="fg"><label>Όνομα Έργου</label><input id="fName" placeholder="π.χ. Διαμέρισμα Κηφισιάς"/></div>
     <div class="fg"><label>Πελάτης</label><input id="fClient" placeholder="π.χ. Παπαδόπουλος Γιώργης"/></div>
-    <div class="fg"><label>Προϋπολογισμός (€)</label><input id="fBudget" type="number" placeholder="π.χ. 25000"/></div>
+    <div class="fg"><label>Συνολικό Κόστος Έργου (€)</label><input id="fBudget" type="number" placeholder="π.χ. 75000"/></div>
     <div class="fg">
       <label>Φάση</label>
       <select id="fPhase">
@@ -202,6 +186,19 @@
   </div>
 </div>
 
+<!-- RECEIPT MODAL -->
+<div class="overlay" id="receiptModal" style="display:none">
+  <div class="modal" style="border-top-color:var(--blue)">
+    <h3 style="color:var(--blue)">💳 ΝΕΑ ΕΙΣΠΡΑΞΗ</h3>
+    <div class="fg"><label>Ποσό (€)</label><input id="rAmount" type="number" placeholder="π.χ. 18000"/></div>
+    <div class="fg"><label>Σημείωση</label><input id="rNote" placeholder="π.χ. Προκαταβολή, 1η δόση..."/></div>
+    <div class="mbtns">
+      <button class="mbtn2" onclick="closeReceiptModal()">Ακύρωση</button>
+      <button class="mbtn-blue" onclick="saveReceipt()">💳 Καταχώρηση</button>
+    </div>
+  </div>
+</div>
+
 <!-- MANAGE -->
 <div class="overlay" id="manageModal" style="display:none">
   <div class="modal">
@@ -209,6 +206,7 @@
     <div class="tabs">
       <button class="tab active" onclick="switchTab('projects',this)">📁 Έργα</button>
       <button class="tab" onclick="switchTab('expenses',this)">💰 Έξοδα</button>
+      <button class="tab" onclick="switchTab('receipts',this)">💳 Εισπράξεις</button>
       <button class="tab" onclick="switchTab('tasks',this)">🔨 Εργασίες</button>
     </div>
     <div id="manageContent"></div>
@@ -240,11 +238,12 @@ function buildSystem() {
   const cp = currentProject && projects[currentProject];
   let ctx = '';
   if (cp) {
-    const tot = cp.expenses.reduce((a,e)=>a+Number(e.amount),0);
+    const totalExp = cp.expenses.reduce((a,e)=>a+Number(e.amount),0);
+    const totalRec = (cp.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
     const bud = Number(cp.budget)||0;
-    ctx = `\n## ΕΝΕΡΓΟ ΕΡΓΟΤΑΞΙΟ\n- Όνομα: ${cp.name}\n- Πελάτης: ${cp.client}\n- Π/Υ: ${bud?'€'+bud.toLocaleString('el-GR'):'Μη ορισμένος'}\n- Φάση: ${cp.phase}\n- Έξοδα: €${tot.toLocaleString('el-GR')}\n- Υπόλοιπο: ${bud?'€'+(bud-tot).toLocaleString('el-GR'):'N/A'}\n\n### Πληρωμές:\n${cp.expenses.length?cp.expenses.map(e=>`• ${e.date} | ${e.category} | ${e.recipient} | €${Number(e.amount).toLocaleString('el-GR')}${e.note?' | '+e.note:''}`).join('\n'):'(καμία)'}\n\n### Εργασίες:\n${cp.tasks.length?cp.tasks.map(t=>`• [${t.done?'✓':'○'}] ${t.name} | ${t.assignee||'-'} | ${t.deadline||'-'}`).join('\n'):'(καμία)'}`;
+    ctx = `\n## ΕΝΕΡΓΟ ΕΡΓΟΤΑΞΙΟ\n- Όνομα: ${cp.name}\n- Πελάτης: ${cp.client}\n- Συνολικό κόστος έργου: ${bud?'€'+bud.toLocaleString('el-GR'):'Μη ορισμένο'}\n- Φάση: ${cp.phase}\n- Συνολικά Έξοδα: €${totalExp.toLocaleString('el-GR')}\n- Συνολικές Εισπράξεις: €${totalRec.toLocaleString('el-GR')}\n- Υπόλοιπο πελάτη: ${bud?'€'+(bud-totalRec).toLocaleString('el-GR'):'N/A'}\n- Κέρδος (Εισπράξεις-Έξοδα): €${(totalRec-totalExp).toLocaleString('el-GR')}\n\n### Πληρωμές εξόδων:\n${cp.expenses.length?cp.expenses.map(e=>`• ${e.date} | ${e.category} | ${e.recipient} | €${Number(e.amount).toLocaleString('el-GR')}${e.note?' | '+e.note:''}`).join('\n'):'(καμία)'}\n\n### Εισπράξεις από πελάτη:\n${(cp.receipts||[]).length?(cp.receipts||[]).map(r=>`• ${r.date} | €${Number(r.amount).toLocaleString('el-GR')}${r.note?' | '+r.note:''}`).join('\n'):'(καμία)'}\n\n### Εργασίες:\n${cp.tasks.length?cp.tasks.map(t=>`• [${t.done?'✓':'○'}] ${t.name} | ${t.assignee||'-'} | ${t.deadline||'-'}`).join('\n'):'(καμία)'}`;
   } else ctx = '\nΔεν έχει επιλεγεί εργοτάξιο.';
-  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, εργασιών, reports, emails, υπολογισμοί.\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή, ΠΑΝΤΑ πρόσθεσε:\nSAVE_EXPENSE:{"category":"[κατ]","recipient":"[παρ]","amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει εργασία, ΠΑΝΤΑ πρόσθεσε:\nSAVE_TASK:{"name":"[όνομα]","assignee":"[υπεύθ]","deadline":"[προθ]"}\n\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
+  return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, εισπράξεων, εργασιών, reports, emails, υπολογισμοί.\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή/έξοδο, ΠΑΝΤΑ πρόσθεσε:\nSAVE_EXPENSE:{"category":"[κατ]","recipient":"[παρ]","amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει είσπραξη/προκαταβολή από πελάτη, ΠΑΝΤΑ πρόσθεσε:\nSAVE_RECEIPT:{"amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει εργασία, ΠΑΝΤΑ πρόσθεσε:\nSAVE_TASK:{"name":"[όνομα]","assignee":"[υπεύθ]","deadline":"[προθ]"}\n\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.`;
 }
 
 async function init() {
@@ -259,8 +258,10 @@ async function init() {
       currentProject = firstId;
       document.getElementById('projSel').value = firstId;
       const p = projects[firstId];
-      const tot = p.expenses.reduce((a,e)=>a+Number(e.amount),0);
-      addAI(`📂 Καλώς ήρθες!\n\nΕνεργό: **"${p.name}"** | ${p.client} | Έξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
+      const totExp = p.expenses.reduce((a,e)=>a+Number(e.amount),0);
+      const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
+      const bud = Number(p.budget)||0;
+      addAI(`📂 Καλώς ήρθες!\n\nΕνεργό: **"${p.name}"** | ${p.client}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
     } else {
       addAI('👋 Καλώς ήρθες! Πάτα **"+ Έργο"** για να ξεκινήσεις!');
     }
@@ -280,26 +281,56 @@ function refreshSelect() {
 function openModal() { document.getElementById('modal').style.display='flex'; setTimeout(()=>document.getElementById('fName').focus(),100); }
 function closeModal() { document.getElementById('modal').style.display='none'; }
 
+function openReceiptModal() {
+  if (!currentProject) { alert('Επέλεξε πρώτα ένα έργο!'); return; }
+  document.getElementById('receiptModal').style.display='flex';
+  setTimeout(()=>document.getElementById('rAmount').focus(),100);
+}
+function closeReceiptModal() { document.getElementById('receiptModal').style.display='none'; }
+
+async function saveReceipt() {
+  const amount = Number(document.getElementById('rAmount').value);
+  if (!amount) { alert('Βάλε ποσό!'); return; }
+  const note = document.getElementById('rNote').value.trim();
+  const id = 'r'+Date.now();
+  const receipt = { id, projectId: currentProject, date: new Date().toLocaleDateString('el-GR'), amount, note };
+  if (!projects[currentProject].receipts) projects[currentProject].receipts = [];
+  projects[currentProject].receipts.push(receipt);
+  try {
+    await dbCall('save_receipt', receipt);
+    showToast('💳 Είσπραξη αποθηκεύτηκε!');
+  } catch(e) {}
+  closeReceiptModal();
+  document.getElementById('rAmount').value = '';
+  document.getElementById('rNote').value = '';
+  const p = projects[currentProject];
+  const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
+  const bud = Number(p.budget)||0;
+  addAI(`💳 Είσπραξη **€${amount.toLocaleString('el-GR')}** καταχωρήθηκε!${note?' ('+note+')':''}\n\nΣύνολο εισπράξεων: €${totRec.toLocaleString('el-GR')}${bud?'\nΥπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}`);
+}
+
 async function createProj() {
   const name = document.getElementById('fName').value.trim();
   if (!name) { alert('Δώσε όνομα!'); return; }
   const id = 'p'+Date.now();
-  const p = { id, name, client:document.getElementById('fClient').value.trim()||'Άγνωστος', budget:document.getElementById('fBudget').value||0, phase:document.getElementById('fPhase').value, expenses:[], tasks:[] };
+  const p = { id, name, client:document.getElementById('fClient').value.trim()||'Άγνωστος', budget:document.getElementById('fBudget').value||0, phase:document.getElementById('fPhase').value, expenses:[], tasks:[], receipts:[] };
   projects[id] = p;
   try { await dbCall('save_project', p); showToast('✅ Έργο αποθηκεύτηκε!'); } catch(e){}
   currentProject = id; refreshSelect(); closeModal();
   ['fName','fClient','fBudget'].forEach(i=>document.getElementById(i).value='');
   history = [];
-  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΠ/Υ: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
+  addAI(`✅ Εργοτάξιο **"${p.name}"** δημιουργήθηκε!\n\nΠελάτης: ${p.client} | Φάση: ${p.phase}${p.budget?'\nΣυνολικό κόστος: €'+Number(p.budget).toLocaleString('el-GR'):''}\n\nΤι κάνουμε πρώτα;`);
 }
 
 function switchProj() {
   currentProject = document.getElementById('projSel').value || null;
   if (currentProject && projects[currentProject]) {
     const p = projects[currentProject];
-    const tot = p.expenses.reduce((a,e)=>a+Number(e.amount),0);
+    const totExp = p.expenses.reduce((a,e)=>a+Number(e.amount),0);
+    const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
+    const bud = Number(p.budget)||0;
     history = [];
-    addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client} | Έξοδα: €${tot.toLocaleString('el-GR')}\n\nΠώς μπορώ να βοηθήσω;`);
+    addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client} | Φάση: ${p.phase}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
   }
 }
 
@@ -318,14 +349,17 @@ function renderTab(tab) {
   if (tab === 'projects') {
     const items = Object.values(projects);
     if (!items.length) { c.innerHTML='<div class="empty-msg">Δεν υπάρχουν έργα</div>'; return; }
-    c.innerHTML = items.map(p => `
-      <div class="manage-item">
+    c.innerHTML = items.map(p => {
+      const totRec = (p.receipts||[]).reduce((a,r)=>a+Number(r.amount),0);
+      const bud = Number(p.budget)||0;
+      return `<div class="manage-item">
         <div>
           <div class="manage-item-name">📁 ${p.name}</div>
-          <div class="manage-item-sub">${p.client} · €${Number(p.budget).toLocaleString('el-GR')} · ${p.phase}</div>
+          <div class="manage-item-sub">${p.client} · Κόστος: €${bud.toLocaleString('el-GR')} · Εισπράξεις: €${totRec.toLocaleString('el-GR')} · Υπόλοιπο: €${(bud-totRec).toLocaleString('el-GR')}</div>
         </div>
         <button class="btn-del" onclick="deleteItem('project','${p.id}')">🗑️ Διαγραφή</button>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } else if (tab === 'expenses') {
     const all = Object.values(projects).flatMap(p=>(p.expenses||[]).map(e=>({...e,projName:p.name})));
     if (!all.length) { c.innerHTML='<div class="empty-msg">Δεν υπάρχουν έξοδα</div>'; return; }
@@ -336,6 +370,17 @@ function renderTab(tab) {
           <div class="manage-item-sub">${e.projName} · ${e.date} · ${e.category}</div>
         </div>
         <button class="btn-del" onclick="deleteItem('expense','${e.id}')">🗑️ Διαγραφή</button>
+      </div>`).join('');
+  } else if (tab === 'receipts') {
+    const all = Object.values(projects).flatMap(p=>(p.receipts||[]).map(r=>({...r,projName:p.name})));
+    if (!all.length) { c.innerHTML='<div class="empty-msg">Δεν υπάρχουν εισπράξεις</div>'; return; }
+    c.innerHTML = all.map(r => `
+      <div class="manage-item">
+        <div>
+          <div class="manage-item-name">💳 €${Number(r.amount).toLocaleString('el-GR')}${r.note?' — '+r.note:''}</div>
+          <div class="manage-item-sub">${r.projName} · ${r.date}</div>
+        </div>
+        <button class="btn-del" onclick="deleteItem('receipt','${r.id}')">🗑️ Διαγραφή</button>
       </div>`).join('');
   } else {
     const all = Object.values(projects).flatMap(p=>(p.tasks||[]).map(t=>({...t,projName:p.name})));
@@ -357,6 +402,7 @@ async function deleteItem(table, id) {
     await dbCall('delete', {table, id});
     if (table==='project') { delete projects[id]; if(currentProject===id) currentProject=null; refreshSelect(); }
     else if (table==='expense') Object.values(projects).forEach(p=>{ p.expenses=(p.expenses||[]).filter(e=>e.id!==id); });
+    else if (table==='receipt') Object.values(projects).forEach(p=>{ p.receipts=(p.receipts||[]).filter(r=>r.id!==id); });
     else Object.values(projects).forEach(p=>{ p.tasks=(p.tasks||[]).filter(t=>t.id!==id); });
     showToast('🗑️ Διαγράφηκε!');
     renderTab(currentTab);
@@ -375,6 +421,17 @@ function processSaveCommands(text) {
       dbCall('save_expense', exp).then(()=>showToast('✅ Έξοδο αποθηκεύτηκε!'));
     } catch(e){}
   }
+  const recMatch = text.match(/SAVE_RECEIPT:(\{[^}]+\})/);
+  if (recMatch && currentProject) {
+    try {
+      const d = JSON.parse(recMatch[1]);
+      const id = 'r'+Date.now();
+      const rec = {id, projectId:currentProject, date:new Date().toLocaleDateString('el-GR'), amount:Number(d.amount)||0, note:d.note||''};
+      if (!projects[currentProject].receipts) projects[currentProject].receipts=[];
+      projects[currentProject].receipts.push(rec);
+      dbCall('save_receipt', rec).then(()=>showToast('💳 Είσπραξη αποθηκεύτηκε!'));
+    } catch(e){}
+  }
   const taskMatch = text.match(/SAVE_TASK:(\{[^}]+\})/);
   if (taskMatch && currentProject) {
     try {
@@ -386,7 +443,7 @@ function processSaveCommands(text) {
       dbCall('save_task', task).then(()=>showToast('✅ Εργασία αποθηκεύτηκε!'));
     } catch(e){}
   }
-  return text.replace(/SAVE_EXPENSE:\{[^}]+\}/g,'').replace(/SAVE_TASK:\{[^}]+\}/g,'').trim();
+  return text.replace(/SAVE_EXPENSE:\{[^}]+\}/g,'').replace(/SAVE_RECEIPT:\{[^}]+\}/g,'').replace(/SAVE_TASK:\{[^}]+\}/g,'').trim();
 }
 
 function addUser(text) {
@@ -450,7 +507,7 @@ async function send(txt) {
 }
 
 function qa(type) {
-  const map={'πληρωμή':'Πληρωμή: ','εργασία':'Πρόσθεσε εργασία: ','report':'Δώσε μου report με τα έξοδα και την κατάσταση του έργου.','email':'Email για τον πελάτη: ','χρονοδιάγραμμα':'Φτιάξε χρονοδιάγραμμα εργασιών.','κόστος':'Υπολόγισε κόστος για: '};
+  const map={'πληρωμή':'Πληρωμή: ','εργασία':'Πρόσθεσε εργασία: ','report':'Δώσε μου report με έξοδα, εισπράξεις και κατάσταση έργου.','email':'Email για τον πελάτη: ','χρονοδιάγραμμα':'Φτιάξε χρονοδιάγραμμα εργασιών.','κόστος':'Υπολόγισε κόστος για: '};
   const inp=document.getElementById('inp'); inp.value=map[type]||''; inp.focus(); resize(inp);
 }
 function ex(text) { send(text); }
@@ -459,6 +516,7 @@ function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scroll
 
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal')closeModal(); });
 document.getElementById('manageModal').addEventListener('click',e=>{ if(e.target.id==='manageModal')closeManage(); });
+document.getElementById('receiptModal').addEventListener('click',e=>{ if(e.target.id==='receiptModal')closeReceiptModal(); });
 
 init();
 </script>

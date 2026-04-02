@@ -659,7 +659,20 @@ function processSaveCommands(text) {
       dbCall('save_task', task).then(()=>showToast('✅ Εργασία αποθηκεύτηκε!'));
     } catch(e){}
   }
-  return text.replace(/SAVE_EXPENSE:\{[^}]+\}/g,'').replace(/SAVE_RECEIPT:\{[^}]+\}/g,'').replace(/SAVE_TASK:\{[^}]+\}/g,'').trim();
+  const projMatch = text.match(/SAVE_PROJECT:(\{[^}]+\})/);
+  if (projMatch) {
+    try {
+      const d = JSON.parse(projMatch[1]);
+      const id = 'p'+Date.now();
+      const proj = {id, name:d.name||'', client:d.client||'', budget:Number(d.budget)||0, phase:'Προετοιμασία', start_date:d.start_date||'', expenses:[], tasks:[], receipts:[]};
+      projects[id] = proj;
+      dbCall('save_project', proj).then(()=>showToast('✅ Έργο αποθηκεύτηκε!'));
+      refreshSelect();
+      currentProject = id;
+      document.getElementById('projSel').value = id;
+    } catch(e){}
+  }
+  return text.replace(/SAVE_EXPENSE:\{[^}]+\}/g,'').replace(/SAVE_RECEIPT:\{[^}]+\}/g,'').replace(/SAVE_TASK:\{[^}]+\}/g,'').replace(/SAVE_PROJECT:\{[^}]+\}/g,'').trim();
 }
 
 function addUser(text) {

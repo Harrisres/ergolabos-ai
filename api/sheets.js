@@ -55,7 +55,14 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ projects: result });
     }
-
+    if (type === 'update_project') {
+      const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ start_date: data.start_date, phase: data.phase || 'Προετοιμασία' })
+      });
+      return res.status(200).json({ ok: updateRes.ok });
+    }
     if (type === 'save_project') {
       await supabase('POST', 'projects', {
         id: data.id, name: data.name, client: data.client,

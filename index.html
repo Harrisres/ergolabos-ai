@@ -430,6 +430,8 @@ async function saveSchedule() {
 
   try {
     await dbCall('save_payment_schedule', { payments });
+    await dbCall('update_project', { id: currentProject, start_date: startDate });
+    projects[currentProject].start_date = startDate;
     paymentSchedules[currentProject] = payments.map(p=>({...p, due_date:p.dueDate, project_id:p.projectId}));
     showToast('✅ Πρόγραμμα αποθηκεύτηκε!');
     showExistingSchedule(paymentSchedules[currentProject]);

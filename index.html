@@ -129,13 +129,17 @@
 
   @media(max-width:600px){
     header{padding:0 12px;height:58px;}
-    .qa{padding:8px 12px;}
+    .qa{padding:8px 12px;gap:6px;}
+    .qa button{padding:6px 10px;font-size:12px;}
     main{padding:12px;}
-    footer{padding:10px 12px;}
+    footer{padding:10px 12px;position:sticky;bottom:0;}
     .proj-wrap select{max-width:110px;}
     .grid{grid-template-columns:1fr 1fr;}
     .htitle h1{font-size:17px;}
     .payment-row{flex-wrap:wrap;}
+    body{height:100%;min-height:100dvh;}
+    main{flex:1;overflow-y:auto;padding-bottom:20px;}
+    textarea{font-size:16px;}
   }
 </style>
 </head>

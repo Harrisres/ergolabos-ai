@@ -771,7 +771,27 @@ document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id===
 document.getElementById('manageModal').addEventListener('click',e=>{ if(e.target.id==='manageModal')closeManage(); });
 document.getElementById('receiptModal').addEventListener('click',e=>{ if(e.target.id==='receiptModal')closeReceiptModal(); });
 document.getElementById('scheduleModal').addEventListener('click',e=>{ if(e.target.id==='scheduleModal')closeScheduleModal(); });
+async function checkPassword() {
+  const pwd = document.getElementById('passwordInput').value;
+  if (!pwd) return;
+  const res = await fetch('/api/auth', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({password: pwd})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    document.getElementById('loginScreen').style.display = 'none';
+    sessionStorage.setItem('auth', 'true');
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
 
+// Check if already logged in
+if (sessionStorage.getItem('auth') === 'true') {
+  document.getElementById('loginScreen').style.display = 'none';
+}
 init();
 </script>
 </body>

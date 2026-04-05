@@ -147,6 +147,21 @@
 </style>
 </head>
 <body>
+  <!-- LOGIN -->
+<div id="loginScreen" style="position:fixed;inset:0;background:#111318;display:flex;align-items:center;justify-content:center;z-index:999;">
+  <div style="background:#1c1f26;border:1px solid #2c3040;border-top:3px solid #f0a500;border-radius:10px;padding:36px;width:90%;max-width:360px;text-align:center;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#f0a500;letter-spacing:3px;margin-bottom:8px;">ΕΡΓΟΛΑΒΟΣ AI</div>
+    <div style="font-size:13px;color:#9098b0;margin-bottom:28px;">Ψηφιακός Βοηθός Ανακαίνισης</div>
+    <input id="passwordInput" type="password" placeholder="Κωδικός πρόσβασης" 
+      style="width:100%;background:#22262f;border:1px solid #353a4a;color:#eef0f5;padding:12px 15px;font-size:15px;border-radius:7px;outline:none;margin-bottom:12px;font-family:'Inter',sans-serif;"
+      onkeydown="if(event.key==='Enter')checkPassword()"/>
+    <div id="loginError" style="color:#e74c3c;font-size:13px;margin-bottom:10px;display:none;">❌ Λάθος κωδικός!</div>
+    <button onclick="checkPassword()" 
+      style="width:100%;background:#f0a500;color:#000;border:none;padding:13px;font-size:15px;font-weight:700;border-radius:7px;cursor:pointer;">
+      ΕΙΣΟΔΟΣ
+    </button>
+  </div>
+</div>
 
 <header>
   <div class="logo">Ε</div>

@@ -536,8 +536,7 @@ async function markSubPayment(payId, subId) {
     const pay = sub.payments.find(p=>p.id===payId);
     if (pay) {
       pay.paid = true;
-      // Save as expense
-      
+
     }
   }
   showToast('✅ Πληρωμή καταχωρήθηκε!');

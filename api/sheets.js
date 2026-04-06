@@ -189,6 +189,14 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: true });
     }
+    if (type === 'update_subcontractor_total') {
+      await fetch(`${SUPABASE_URL}/rest/v1/subcontractors?id=eq.${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ total_amount: data.totalAmount })
+      });
+      return res.status(200).json({ ok: true });
+    }
     return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {

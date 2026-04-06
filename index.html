@@ -341,7 +341,154 @@ async function init() {
     addAI('⚠️ Σφάλμα σύνδεσης. Δοκίμασε να ανανεώσεις.');
   }
 }
+let subcontractors = {};
 
+async function loadSubcontractors(projectId) {
+  try {
+    const data = await dbCall('load_subcontractors', { projectId });
+    subcontractors[projectId] = data.subcontractors || [];
+  } catch(e) {}
+}
+
+function openSubModal() {
+  if (!currentProject) { alert('Επέλεξε πρώτα ένα έργο!'); return; }
+  document.getElementById('subModal').style.display='flex';
+  renderSubContent();
+}
+function closeSubModal() { document.getElementById('subModal').style.display='none'; }
+
+function renderSubContent() {
+  const subs = subcontractors[currentProject] || [];
+  const content = document.getElementById('subContent');
+  const btns = document.getElementById('subBtns');
+
+  const totalOwed = subs.reduce((a,s) => {
+    const paid = s.payments.filter(p=>p.paid).reduce((x,p)=>x+Number(p.amount),0);
+    return a + (Number(s.total_amount) - paid);
+  }, 0);
+
+  content.innerHTML = `
+    ${subs.length > 0 ? `
+    <div style="background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;">
+      👷 <strong>${subs.length} Υπεργολάβοι</strong> | Συνολικές οφειλές: <strong style="color:#9b59b6">€${totalOwed.toLocaleString('el-GR')}</strong>
+    </div>` : ''}
+    ${subs.map(s => {
+      const totalPaid = s.payments.filter(p=>p.paid).reduce((a,p)=>a+Number(p.amount),0);
+      const owed = Number(s.total_amount) - totalPaid;
+      return `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div>
+              <div style="font-weight:700;font-size:15px;">👷 ${s.name} <span style="font-size:12px;color:var(--dim)">${s.specialty||''}</span></div>
+              <div style="font-size:12px;color:var(--dim);margin-top:3px;">Συνολικό: €${Number(s.total_amount).toLocaleString('el-GR')} | Πληρώθηκε: €${totalPaid.toLocaleString('el-GR')} | <span style="color:${owed>0?'var(--orange)':'var(--green)'}">Οφείλεται: €${owed.toLocaleString('el-GR')}</span></div>
+            </div>
+          </div>
+          ${s.payments.map(p => `
+            <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:6px;${p.paid?'opacity:0.6':''}">
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">${p.description}</div>
+                <div style="font-size:11px;color:var(--dim);">${p.date}</div>
+              </div>
+              <div style="font-weight:700;color:var(--accent);">€${Number(p.amount).toLocaleString('el-GR')}</div>
+              ${!p.paid ? `<button class="btn-paid" onclick="markSubPayment('${p.id}','${s.id}')">✅ Πληρώθηκε</button>` : '<span style="color:var(--green);font-size:12px;">✅ Πληρώθηκε</span>'}
+            </div>`).join('')}
+          <button onclick="showAddPaymentForm('${s.id}')" style="width:100%;background:rgba(155,89,182,0.1);border:1px dashed rgba(155,89,182,0.4);color:#9b59b6;padding:8px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;margin-top:6px;">+ Προσθήκη Πληρωμής</button>
+        </div>`;
+    }).join('')}
+    <div id="addPaymentForm"></div>
+  `;
+
+  btns.innerHTML = `
+    <button class="mbtn2" onclick="closeSubModal()">Κλείσιμο</button>
+    <button style="flex:1;background:#9b59b6;color:#fff;border:none;padding:12px;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;" onclick="showAddSubForm()">+ Νέος Υπεργολάβος</button>
+  `;
+}
+
+function showAddSubForm() {
+  const content = document.getElementById('subContent');
+  content.innerHTML += `
+    <div style="background:var(--surface2);border:1px solid rgba(155,89,182,0.4);border-radius:var(--radius-sm);padding:16px;margin-top:10px;">
+      <div style="font-weight:700;color:#9b59b6;margin-bottom:12px;">➕ Νέος Υπεργολάβος</div>
+      <div class="fg"><label>Όνομα</label><input id="subName" placeholder="π.χ. Νίκος Ηλεκτρολόγος"/></div>
+      <div class="fg"><label>Ειδικότητα</label><input id="subSpecialty" placeholder="π.χ. Ηλεκτρολογικές εργασίες"/></div>
+      <div class="fg"><label>Συνολικό Κόστος (€)</label><input id="subTotal" type="number" placeholder="π.χ. 4500"/></div>
+      <div class="fg"><label>Προκαταβολή (€)</label><input id="subAdvance" type="number" placeholder="π.χ. 2000"/></div>
+      <div class="mbtns">
+        <button class="mbtn2" onclick="renderSubContent()">Ακύρωση</button>
+        <button style="flex:1;background:#9b59b6;color:#fff;border:none;padding:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;" onclick="saveNewSub()">💾 Αποθήκευση</button>
+      </div>
+    </div>`;
+}
+
+async function saveNewSub() {
+  const name = document.getElementById('subName').value.trim();
+  const specialty = document.getElementById('subSpecialty').value.trim();
+  const total = Number(document.getElementById('subTotal').value);
+  const advance = Number(document.getElementById('subAdvance').value);
+  if (!name || !total) { alert('Βάλε όνομα και κόστος!'); return; }
+
+  const subId = 's'+Date.now();
+  const sub = { id:subId, projectId:currentProject, name, specialty, totalAmount:total, notes:'' };
+  await dbCall('save_subcontractor', sub);
+
+  const payments = [];
+  if (advance > 0) {
+    const payId = 'sp'+Date.now();
+    const pay = { id:payId, subcontractorId:subId, projectId:currentProject, description:'Προκαταβολή', amount:advance, date:new Date().toLocaleDateString('el-GR'), paid:true };
+    await dbCall('save_subcontractor_payment', pay);
+    // Save as expense too
+    await dbCall('save_expense', { id:'e'+Date.now(), projectId:currentProject, date:new Date().toLocaleDateString('el-GR'), category:specialty||'Υπεργολάβος', recipient:name, amount:advance, note:'Προκαταβολή' });
+    payments.push({...pay, paid:true});
+  }
+
+  if (!subcontractors[currentProject]) subcontractors[currentProject] = [];
+  subcontractors[currentProject].push({ id:subId, name, specialty, total_amount:total, payments });
+  showToast('✅ Υπεργολάβος αποθηκεύτηκε!');
+  renderSubContent();
+}
+
+function showAddPaymentForm(subId) {
+  const form = document.getElementById('addPaymentForm');
+  form.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid rgba(155,89,182,0.4);border-radius:var(--radius-sm);padding:16px;margin-top:10px;">
+      <div style="font-weight:700;color:#9b59b6;margin-bottom:12px;">➕ Νέα Πληρωμή</div>
+      <div class="fg"><label>Περιγραφή</label><input id="payDesc" placeholder="π.χ. 2η πληρωμή"/></div>
+      <div class="fg"><label>Ποσό (€)</label><input id="payAmount" type="number" placeholder="π.χ. 1500"/></div>
+      <div class="mbtns">
+        <button class="mbtn2" onclick="document.getElementById('addPaymentForm').innerHTML=''">Ακύρωση</button>
+        <button style="flex:1;background:#9b59b6;color:#fff;border:none;padding:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;" onclick="saveSubPayment('${subId}')">💾 Αποθήκευση</button>
+      </div>
+    </div>`;
+}
+
+async function saveSubPayment(subId) {
+  const desc = document.getElementById('payDesc').value.trim();
+  const amount = Number(document.getElementById('payAmount').value);
+  if (!desc || !amount) { alert('Βάλε περιγραφή και ποσό!'); return; }
+
+  const sub = (subcontractors[currentProject]||[]).find(s=>s.id===subId);
+  const payId = 'sp'+Date.now();
+  const pay = { id:payId, subcontractorId:subId, projectId:currentProject, description:desc, amount, date:new Date().toLocaleDateString('el-GR'), paid:false };
+  await dbCall('save_subcontractor_payment', pay);
+  if (sub) sub.payments.push(pay);
+  showToast('✅ Πληρωμή αποθηκεύτηκε!');
+  renderSubContent();
+}
+
+async function markSubPayment(payId, subId) {
+  await dbCall('update_subcontractor_payment', { id:payId, paid:true });
+  const sub = (subcontractors[currentProject]||[]).find(s=>s.id===subId);
+  if (sub) {
+    const pay = sub.payments.find(p=>p.id===payId);
+    if (pay) {
+      pay.paid = true;
+      // Save as expense
+      await dbCall('save_expense', { id:'e'+Date.now(), projectId:currentProject, date:new Date().toLocaleDateString('el-GR'), category:sub.specialty||'Υπεργολάβος', recipient:sub.name, amount:pay.amount, note:pay.description });
+    }
+  }
+  showToast('✅ Πληρωμή καταχωρήθηκε!');
+  renderSubContent();
+}
 async function loadPaymentSchedule(projectId) {
   try {
     const data = await dbCall('load_payment_schedule', { projectId });

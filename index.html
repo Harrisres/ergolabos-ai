@@ -479,7 +479,57 @@ async function saveSubPayment(subId) {
   showToast('✅ Πληρωμή αποθηκεύτηκε!');
   renderSubContent();
 }
+async function deleteSubPayment(payId, subId) {
+  if (!confirm('Διαγραφή αυτής της πληρωμής;')) return;
+  try {
+    await dbCall('delete', { table: 'subcontractor_payment', id: payId });
+    const sub = (subcontractors[currentProject]||[]).find(s=>s.id===subId);
+    if (sub) sub.payments = sub.payments.filter(p=>p.id!==payId);
+    showToast('🗑️ Πληρωμή διαγράφηκε!');
+    renderSubContent();
+  } catch(e) { alert('Σφάλμα!'); }
+}
 
+function showExtraCostForm(subId) {
+  const form = document.getElementById('addPaymentForm');
+  form.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid rgba(230,126,34,0.4);border-radius:var(--radius-sm);padding:16px;margin-top:10px;">
+      <div style="font-weight:700;color:var(--orange);margin-bottom:12px;">➕ Έκτακτο Κόστος</div>
+      <div class="fg"><label>Περιγραφή</label><input id="extraDesc" placeholder="π.χ. Έξτρα υδραυλικές εργασίες"/></div>
+      <div class="fg"><label>Ποσό (€)</label><input id="extraAmount" type="number" placeholder="π.χ. 500"/></div>
+      <div class="mbtns">
+        <button class="mbtn2" onclick="document.getElementById('addPaymentForm').innerHTML=''">Ακύρωση</button>
+        <button style="flex:1;background:var(--orange);color:#fff;border:none;padding:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;" onclick="saveExtraCost('${subId}')">💾 Αποθήκευση</button>
+      </div>
+    </div>`;
+}
+
+async function saveExtraCost(subId) {
+  const desc = document.getElementById('extraDesc').value.trim();
+  const amount = Number(document.getElementById('extraAmount').value);
+  if (!desc || !amount) { alert('Βάλε περιγραφή και ποσό!'); return; }
+
+  const sub = (subcontractors[currentProject]||[]).find(s=>s.id===subId);
+  if (!sub) return;
+
+  // Ενημέρωσε το συνολικό κόστος
+  const newTotal = Number(sub.total_amount) + amount;
+  await fetch('/api/sheets', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ type: 'update_subcontractor_total', data: { id: subId, totalAmount: newTotal } })
+  });
+  sub.total_amount = newTotal;
+
+  // Πρόσθεσε ως νέα πληρωμή (απλήρωτη)
+  const payId = 'sp'+Date.now();
+  const pay = { id:payId, subcontractorId:subId, projectId:currentProject, description:desc+' (έκτακτο)', amount, date:new Date().toLocaleDateString('el-GR'), paid:false };
+  await dbCall('save_subcontractor_payment', pay);
+  sub.payments.push(pay);
+
+  showToast('✅ Έκτακτο κόστος προστέθηκε!');
+  renderSubContent();
+}
 async function markSubPayment(payId, subId) {
   await dbCall('update_subcontractor_payment', { id:payId, paid:true });
   const sub = (subcontractors[currentProject]||[]).find(s=>s.id===subId);

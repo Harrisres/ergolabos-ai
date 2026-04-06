@@ -441,8 +441,7 @@ async function saveNewSub() {
     const payId = 'sp'+Date.now();
     const pay = { id:payId, subcontractorId:subId, projectId:currentProject, description:'Προκαταβολή', amount:advance, date:new Date().toLocaleDateString('el-GR'), paid:true };
     await dbCall('save_subcontractor_payment', pay);
-    // Save as expense too
-    await dbCall('save_expense', { id:'e'+Date.now(), projectId:currentProject, date:new Date().toLocaleDateString('el-GR'), category:specialty||'Υπεργολάβος', recipient:name, amount:advance, note:'Προκαταβολή' });
+  
     payments.push({...pay, paid:true});
   }
 

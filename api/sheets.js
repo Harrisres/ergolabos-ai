@@ -131,7 +131,7 @@ export default async function handler(req, res) {
 
     if (type === 'delete') {
       const { table, id } = data;
-      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks', receipt: 'receipts' };
+      const tableMap = { project: 'projects', expense: 'expenses', task: 'tasks', receipt: 'receipts', subcontractor_payment: 'subcontractor_payments' };
       const supaTable = tableMap[table];
       if (!supaTable) return res.status(400).json({ error: 'invalid table' });
 

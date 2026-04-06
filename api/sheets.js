@@ -141,6 +141,8 @@ export default async function handler(req, res) {
           deleteByProjectId('tasks', id),
           deleteByProjectId('receipts', id),
           deleteByProjectId('payment_schedule', id),
+          deleteByProjectId('subcontractors', id),
+          deleteByProjectId('subcontractor_payments', id),
         ]);
       }
 

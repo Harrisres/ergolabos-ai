@@ -150,7 +150,43 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: delRes.ok });
     }
+    if (type === 'save_subcontractor') {
+      await supabase('POST', 'subcontractors', {
+        id: data.id, project_id: data.projectId, name: data.name,
+        specialty: data.specialty, total_amount: data.totalAmount, notes: data.notes || ''
+      });
+      return res.status(200).json({ ok: true });
+    }
 
+    if (type === 'save_subcontractor_payment') {
+      await supabase('POST', 'subcontractor_payments', {
+        id: data.id, subcontractor_id: data.subcontractorId,
+        project_id: data.projectId, description: data.description,
+        amount: data.amount, date: data.date, paid: data.paid || false
+      });
+      return res.status(200).json({ ok: true });
+    }
+
+    if (type === 'load_subcontractors') {
+      const [subs, payments] = await Promise.all([
+        supabase('GET', 'subcontractors', null, `?project_id=eq.${data.projectId}&select=*`),
+        supabase('GET', 'subcontractor_payments', null, `?project_id=eq.${data.projectId}&select=*`),
+      ]);
+      const result = (subs || []).map(s => ({
+        ...s,
+        payments: (payments || []).filter(p => p.subcontractor_id === s.id)
+      }));
+      return res.status(200).json({ subcontractors: result });
+    }
+
+    if (type === 'update_subcontractor_payment') {
+      await fetch(`${SUPABASE_URL}/rest/v1/subcontractor_payments?id=eq.${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ paid: data.paid })
+      });
+      return res.status(200).json({ ok: true });
+    }
     return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {

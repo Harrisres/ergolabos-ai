@@ -733,6 +733,7 @@ function switchProj() {
     history = [];
     addAI(`📂 Έργο: **"${p.name}"**\nΠελάτης: ${p.client}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
     loadPaymentSchedule(currentProject);
+    loadSubcontractors(currentProject);
   }
 }
 

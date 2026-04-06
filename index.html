@@ -333,6 +333,7 @@ async function init() {
       addAI(`📂 Καλώς ήρθες!\n\nΕνεργό: **"${p.name}"** | ${p.client}\n💰 Έξοδα: €${totExp.toLocaleString('el-GR')} | 💳 Εισπράξεις: €${totRec.toLocaleString('el-GR')}${bud?'\n📊 Υπόλοιπο πελάτη: €'+(bud-totRec).toLocaleString('el-GR'):''}\n\nΠώς μπορώ να βοηθήσω;`);
       // Load payment schedule
       loadPaymentSchedule(firstId);
+      loadSubcontractors(firstId);
     } else {
       addAI('👋 Καλώς ήρθες! Πάτα **"+ Έργο"** για να ξεκινήσεις!');
     }

@@ -538,7 +538,7 @@ async function markSubPayment(payId, subId) {
     if (pay) {
       pay.paid = true;
       // Save as expense
-      await dbCall('save_expense', { id:'e'+Date.now(), projectId:currentProject, date:new Date().toLocaleDateString('el-GR'), category:sub.specialty||'Υπεργολάβος', recipient:sub.name, amount:pay.amount, note:pay.description });
+      
     }
   }
   showToast('✅ Πληρωμή καταχωρήθηκε!');

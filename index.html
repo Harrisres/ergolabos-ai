@@ -392,8 +392,12 @@ function renderSubContent() {
               </div>
               <div style="font-weight:700;color:var(--accent);">€${Number(p.amount).toLocaleString('el-GR')}</div>
               ${!p.paid ? `<button class="btn-paid" onclick="markSubPayment('${p.id}','${s.id}')">✅ Πληρώθηκε</button>` : '<span style="color:var(--green);font-size:12px;">✅ Πληρώθηκε</span>'}
+<button class="btn-del" onclick="deleteSubPayment('${p.id}','${s.id}')">🗑️</button>
             </div>`).join('')}
-          <button onclick="showAddPaymentForm('${s.id}')" style="width:100%;background:rgba(155,89,182,0.1);border:1px dashed rgba(155,89,182,0.4);color:#9b59b6;padding:8px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;margin-top:6px;">+ Προσθήκη Πληρωμής</button>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+  <button onclick="showAddPaymentForm('${s.id}')" style="flex:1;background:rgba(155,89,182,0.1);border:1px dashed rgba(155,89,182,0.4);color:#9b59b6;padding:8px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;">+ Προσθήκη Πληρωμής</button>
+  <button onclick="showExtraCostForm('${s.id}')" style="flex:1;background:rgba(230,126,34,0.1);border:1px dashed rgba(230,126,34,0.4);color:var(--orange);padding:8px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;">+ Έκτακτο Κόστος</button>
+</div>
         </div>`;
     }).join('')}
     <div id="addPaymentForm"></div>

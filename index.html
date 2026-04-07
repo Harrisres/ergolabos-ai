@@ -992,7 +992,7 @@ let recognition = null;
 let isListening = false;
 function toggleMic() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Ο browser σου δεν υποστηρίζει φωνητική εισαγωγή. Χρησιμοποίησε Chrome!');
+    alert('Χρησιμοποίησε Chrome!');
     return;
   }
   if (isListening) {
@@ -1000,48 +1000,48 @@ function toggleMic() {
     recognition.stop();
     return;
   }
-
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'el-GR';
-  recognition.continuous = true;
-  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.interimResults = true;
 
   recognition.onstart = () => {
     isListening = true;
     document.getElementById('micBtn').classList.add('active');
     document.getElementById('micBtn').textContent = '⏹️';
+    document.getElementById('inp').placeholder = 'Μιλάς...';
   };
 
-  let silenceTimer = null;
-  
   recognition.onresult = (event) => {
-    clearTimeout(silenceTimer);
-    let text = '';
+    let finalText = '';
+    let interimText = '';
     for (let i = 0; i < event.results.length; i++) {
-      text += event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalText += event.results[i][0].transcript;
+      } else {
+        interimText += event.results[i][0].transcript;
+      }
     }
-    document.getElementById('inp').value = text;
+    document.getElementById('inp').value = finalText || interimText;
     resize(document.getElementById('inp'));
-    silenceTimer = setTimeout(() => {
-      recognition.stop();
-    }, 2000);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('active');
+    document.getElementById('micBtn').textContent = '🎤';
+    document.getElementById('inp').placeholder = 'Γράψε ό,τι χρειάζεσαι...';
+    const text = document.getElementById('inp').value.trim();
+    if (text) send();
   };
 
   recognition.onerror = () => {
     isListening = false;
     document.getElementById('micBtn').classList.remove('active');
     document.getElementById('micBtn').textContent = '🎤';
+    document.getElementById('inp').placeholder = 'Γράψε ό,τι χρειάζεσαι...';
   };
- recognition.onend = () => {
-    if (isListening) {
-      recognition.start();
-    } else {
-      document.getElementById('micBtn').classList.remove('active');
-      document.getElementById('micBtn').textContent = '🎤';
-    }
-  };
-  
 
   recognition.start();
 }

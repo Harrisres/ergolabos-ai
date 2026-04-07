@@ -1012,11 +1012,20 @@ function toggleMic() {
     document.getElementById('micBtn').textContent = '⏹️';
   };
 
+  let silenceTimer = null;
+  
   recognition.onresult = (event) => {
-    const text = event.results[0][0].transcript;
+    clearTimeout(silenceTimer);
+    let text = '';
+    for (let i = 0; i < event.results.length; i++) {
+      text += event.results[i][0].transcript;
+    }
     document.getElementById('inp').value = text;
     resize(document.getElementById('inp'));
-    send();
+    silenceTimer = setTimeout(() => {
+      recognition.stop();
+    }, 2000);
+  };
   };
 
   recognition.onerror = () => {

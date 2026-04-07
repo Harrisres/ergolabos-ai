@@ -82,6 +82,8 @@
   .send{background:var(--accent);color:#000;border:none;width:46px;height:46px;border-radius:var(--radius);cursor:pointer;font-size:18px;flex-shrink:0;font-weight:700;}
   .send:hover{background:var(--accent2);}
   .send:disabled{opacity:.4;cursor:not-allowed;}
+  .mic{background:var(--surface2);color:var(--dim);border:1px solid var(--border2);width:46px;height:46px;border-radius:var(--radius);cursor:pointer;font-size:18px;flex-shrink:0;}
+.mic.active{background:rgba(231,76,60,0.2);color:var(--red);border-color:var(--red);animation:pulse 1s infinite;}
   .fnote{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;}
   .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;vertical-align:middle;margin-right:5px;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -986,6 +988,51 @@ function qa(type) {
   const inp=document.getElementById('inp'); inp.value=map[type]||''; inp.focus(); resize(inp);
 }
 function ex(text) { if(text) send(text); }
+let recognition = null;
+let isListening = false;
+
+function toggleMic() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Ο browser σου δεν υποστηρίζει φωνητική εισαγωγή. Χρησιμοποίησε Chrome!');
+    return;
+  }
+  if (isListening) {
+    recognition.stop();
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'el-GR';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('micBtn').classList.add('active');
+    document.getElementById('micBtn').textContent = '⏹️';
+  };
+
+  recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    document.getElementById('inp').value = text;
+    resize(document.getElementById('inp'));
+    send();
+  };
+
+  recognition.onerror = () => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('active');
+    document.getElementById('micBtn').textContent = '🎤';
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('active');
+    document.getElementById('micBtn').textContent = '🎤';
+  };
+
+  recognition.start();
+}
 function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
 function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,130)+'px'; }
 

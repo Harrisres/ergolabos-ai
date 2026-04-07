@@ -1032,12 +1032,15 @@ function toggleMic() {
     document.getElementById('micBtn').classList.remove('active');
     document.getElementById('micBtn').textContent = '🎤';
   };
-
-  recognition.onend = () => {
-    isListening = false;
-    document.getElementById('micBtn').classList.remove('active');
-    document.getElementById('micBtn').textContent = '🎤';
+ recognition.onend = () => {
+    if (isListening) {
+      recognition.start();
+    } else {
+      document.getElementById('micBtn').classList.remove('active');
+      document.getElementById('micBtn').textContent = '🎤';
+    }
   };
+  
 
   recognition.start();
 }

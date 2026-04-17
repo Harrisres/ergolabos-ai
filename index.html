@@ -319,7 +319,8 @@ function buildSystem() {
 const subsInfo = subs.length ? '\n\n### Υπεργολάβοι:\n' + subs.map(s => {
   const totalPaid = s.payments.filter(p=>p.paid).reduce((a,p)=>a+Number(p.amount),0);
   const owed = Number(s.total_amount) - totalPaid;
-  return `• ${s.name} (${s.specialty||''}) | Συνολικό: €${Number(s.total_amount).toLocaleString('el-GR')} | Πληρώθηκε: €${totalPaid.toLocaleString('el-GR')} | Οφείλεται: €${owed.toLocaleString('el-GR')}`;
+  const payDetails = s.payments.filter(p=>p.paid).map(p=>`  → ${p.date} | ${p.description} | €${Number(p.amount).toLocaleString('el-GR')}`).join('\n');
+return `• ${s.name} (${s.specialty||''}) | Συνολικό: €${Number(s.total_amount).toLocaleString('el-GR')} | Πληρώθηκε: €${totalPaid.toLocaleString('el-GR')} | Οφείλεται: €${owed.toLocaleString('el-GR')}\n${payDetails}`;
 }).join('\n') : '';
     ctx = `\n## ΕΝΕΡΓΟ ΕΡΓΟΤΑΞΙΟ\n- Όνομα: ${cp.name}\n- Πελάτης: ${cp.client}\n- Συνολικό κόστος: ${bud?'€'+bud.toLocaleString('el-GR'):'Μη ορισμένο'}\n- Φάση: ${cp.phase||'Προετοιμασία'}\n- Έξοδα: €${totalExp.toLocaleString('el-GR')}\n- Εισπράξεις: €${totalRec.toLocaleString('el-GR')}\n- Υπόλοιπο πελάτη: ${bud?'€'+(bud-totalRec).toLocaleString('el-GR'):'N/A'}\n- Κέρδος: €${(totalRec-totalExp).toLocaleString('el-GR')}\n\n### Πληρωμές εξόδων:\n${cp.expenses.length?cp.expenses.map(e=>`• ${e.date} | ${e.category} | ${e.recipient} | €${Number(e.amount).toLocaleString('el-GR')}`).join('\n'):'(καμία)'}\n\n### Εισπράξεις:\n${(cp.receipts||[]).length?(cp.receipts||[]).map(r=>`• ${r.date} | €${Number(r.amount).toLocaleString('el-GR')}${r.note?' | '+r.note:''}`).join('\n'):'(καμία)'}${scheduleInfo}${subsInfo}\n\n### Εργασίες:\n${cp.tasks.length?cp.tasks.map(t=>`• [${t.done?'✓':'○'}] ${t.name} | ${t.assignee||'-'} | ${t.deadline||'-'}`).join('\n'):'(καμία)'}`;
   } else ctx = '\nΔεν έχει επιλεγεί εργοτάξιο.';

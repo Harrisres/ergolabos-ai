@@ -485,6 +485,15 @@ async function saveSubPayment(subId) {
   const payId = 'sp'+Date.now();
   const pay = { id:payId, subcontractorId:subId, projectId:currentProject, description:desc, amount, date:new Date().toLocaleDateString('el-GR'), paid:false };
   await dbCall('save_subcontractor_payment', pay);
+  await dbCall('save_expense', { 
+      id:'e'+Date.now(), 
+      projectId:currentProject, 
+      date:new Date().toLocaleDateString('el-GR'), 
+      category:specialty||'Υπεργολάβος', 
+      recipient:name, 
+      amount:advance, 
+      note:'Προκαταβολή' 
+    });
   if (sub) sub.payments.push(pay);
   showToast('✅ Πληρωμή αποθηκεύτηκε!');
   renderSubContent();
@@ -549,6 +558,17 @@ async function markSubPayment(payId, subId) {
       pay.paid = true;
 
     }
+  }
+  if (sub && pay) {
+    await dbCall('save_expense', { 
+      id:'e'+Date.now(), 
+      projectId:currentProject, 
+      date:new Date().toLocaleDateString('el-GR'), 
+      category:sub.specialty||'Υπεργολάβος', 
+      recipient:sub.name, 
+      amount:pay.amount, 
+      note:pay.description 
+    });
   }
   showToast('✅ Πληρωμή καταχωρήθηκε!');
   renderSubContent();

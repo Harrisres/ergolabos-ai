@@ -490,10 +490,10 @@ async function saveSubPayment(subId) {
       id:'e'+Date.now(), 
       projectId:currentProject, 
       date:new Date().toLocaleDateString('el-GR'), 
-      category:specialty||'Υπεργολάβος', 
-      recipient:name, 
-      amount:advance, 
-      note:'Προκαταβολή' 
+      category:sub.specialty||'Υπεργολάβος', 
+      recipient:sub.name, 
+      amount:amount, 
+      note:desc 
     });
   if (sub) sub.payments.push(pay);
   showToast('✅ Πληρωμή αποθηκεύτηκε!');

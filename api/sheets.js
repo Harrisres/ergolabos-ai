@@ -59,7 +59,13 @@ export default async function handler(req, res) {
       const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${data.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ start_date: data.start_date, phase: data.phase || 'Προετοιμασία' })
+        body: JSON.stringify({ 
+          start_date: data.start_date, 
+          phase: data.phase || 'Προετοιμασία',
+          name: data.name,
+          client: data.client,
+          budget: data.budget
+        })
       });
       return res.status(200).json({ ok: updateRes.ok });
     }

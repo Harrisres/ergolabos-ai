@@ -557,15 +557,20 @@ async function markSubPayment(payId, subId) {
     const pay = sub.payments.find(p=>p.id===payId);
     if (pay) {
       pay.paid = true;
-      await dbCall('save_expense', { 
-        id:'e'+Date.now(), 
-        projectId:currentProject, 
+      const expId = 'e'+Date.now();
+      const newExp = { 
+        id:expId, 
+        projectId:currentProject,
+        project_id:currentProject,
         date:new Date().toLocaleDateString('el-GR'), 
         category:sub.specialty||'Υπεργολάβος', 
         recipient:sub.name, 
         amount:pay.amount, 
         note:pay.description 
-      });
+      };
+      await dbCall('save_expense', newExp);
+      if (!projects[currentProject].expenses) projects[currentProject].expenses=[];
+      projects[currentProject].expenses.push(newExp);
     }
   }
   showToast('✅ Πληρωμή καταχωρήθηκε!');

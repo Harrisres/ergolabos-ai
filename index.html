@@ -994,9 +994,21 @@ function addUser(text) {
 }
 function addAI(text) {
   const clean = processSaveCommands(text);
+  const msgId = 'm'+Date.now();
   const d=document.createElement('div'); d.className='msg';
-  d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai">${fmt(clean)}</div>`;
+  d.innerHTML=`<div class="ava ai">Ε</div><div class="bubble ai">${fmt(clean)}<button class="btn-speak" onclick="speakText('${msgId}')">🔊 Άκου</button><div id="${msgId}" style="display:none">${clean.replace(/'/g,"&#39;").replace(/"/g,'&quot;')}</div></div>`;
   document.getElementById('chat').appendChild(d); scroll();
+}
+
+function speakText(msgId) {
+  const text = document.getElementById(msgId).textContent;
+  // Καθάρισμα από emojis και markdown
+  const cleanText = text.replace(/[*_`#]/g,'').replace(/[\u{1F300}-\u{1F9FF}]/gu,'').replace(/€/g,'ευρώ');
+  const utter = new SpeechSynthesisUtterance(cleanText);
+  utter.lang = 'el-GR';
+  utter.rate = 1.0;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
 }
 function showTyping() {
   const d=document.createElement('div'); d.className='msg'; d.id='typ';

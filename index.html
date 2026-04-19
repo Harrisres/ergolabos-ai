@@ -1151,6 +1151,9 @@ async function checkPassword() {
 if (sessionStorage.getItem('auth') === 'true') {
   document.getElementById('loginScreen').style.display = 'none';
 }
+window.addEventListener('beforeunload', () => {
+  window.speechSynthesis.cancel();
+});
 init();
 </script>
 </body>

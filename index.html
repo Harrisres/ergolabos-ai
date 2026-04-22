@@ -377,7 +377,8 @@ async function loadBusinessExpenses() {
 
 function openBizModal() {
   document.getElementById('bizModal').style.display='flex';
-  renderBizContent();
+  loadBusinessExpenses().then(() => renderBizContent());
+}
 }
 function closeBizModal() { document.getElementById('bizModal').style.display='none'; }
 

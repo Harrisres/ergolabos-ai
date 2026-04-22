@@ -397,9 +397,16 @@ function renderBizContent(filterMonth='', filterCat='') {
   // Φίλτρα
   const months = [...new Set(businessExpenses.map(e=>e.date?.slice(-4)+'/'+e.date?.slice(3,5)))].filter(Boolean).sort().reverse();
   const filtered = businessExpenses.filter(e => {
-    const monthMatch = !filterMonth || (e.date?.slice(-4)+'/'+e.date?.slice(3,5)) === filterMonth;
     const catMatch = !filterCat || e.category === filterCat;
-    return monthMatch && catMatch;
+    if (!filterMonth) return catMatch;
+    const year = e.date?.slice(-4);
+    const month = parseInt(e.date?.slice(3,5));
+    if (filterMonth === 'q1') return year && [1,2,3].includes(month) && catMatch;
+    if (filterMonth === 'q2') return year && [4,5,6].includes(month) && catMatch;
+    if (filterMonth === 'q3') return year && [7,8,9].includes(month) && catMatch;
+    if (filterMonth === 'q4') return year && [10,11,12].includes(month) && catMatch;
+    if (filterMonth === 'year') return catMatch;
+    return (e.date?.slice(-4)+'/'+e.date?.slice(3,5)) === filterMonth && catMatch;
   });
 
   const total = filtered.reduce((a,e)=>a+Number(e.amount),0);
@@ -408,8 +415,19 @@ function renderBizContent(filterMonth='', filterCat='') {
   content.innerHTML = `
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
       <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
-        <option value="">📅 Όλοι οι μήνες</option>
-        ${months.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('')}
+        <option value="">📅 Όλη η περίοδος</option>
+        <optgroup label="── Μήνες ──">
+          ${months.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('')}
+        </optgroup>
+        <optgroup label="── Τρίμηνα ──">
+          <option value="q1" ${filterMonth==='q1'?'selected':''}>Α΄ Τρίμηνο (Ιαν-Μαρ)</option>
+          <option value="q2" ${filterMonth==='q2'?'selected':''}>Β΄ Τρίμηνο (Απρ-Ιουν)</option>
+          <option value="q3" ${filterMonth==='q3'?'selected':''}>Γ΄ Τρίμηνο (Ιουλ-Σεπ)</option>
+          <option value="q4" ${filterMonth==='q4'?'selected':''}>Δ΄ Τρίμηνο (Οκτ-Δεκ)</option>
+        </optgroup>
+        <optgroup label="── Έτος ──">
+          <option value="year" ${filterMonth==='year'?'selected':''}>Ολόκληρο το έτος</option>
+        </optgroup>
       </select>
       <select id="bizCatFilter" onchange="renderBizContent(document.querySelector('#bizContent select').value, this.value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
         <option value="">🏷️ Όλες οι κατηγορίες</option>

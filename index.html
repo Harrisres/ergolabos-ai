@@ -42,7 +42,9 @@
   .qa .schedule-btn{border-color:rgba(46,204,113,0.4);color:var(--green);}
   .qa .schedule-btn:hover{border-color:var(--green);background:rgba(46,204,113,0.08);}
   .qa .sub-btn{border-color:rgba(155,89,182,0.4);color:#9b59b6;}
-.qa .sub-btn:hover{border-color:#9b59b6;background:rgba(155,89,182,0.08);}
+  .qa .sub-btn:hover{border-color:#9b59b6;background:rgba(155,89,182,0.08);}
+  .qa .biz-btn{border-color:rgba(231,76,60,0.4);color:var(--red);}
+.qa .biz-btn:hover{border-color:var(--red);background:rgba(231,76,60,0.08);}
   main{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
   main::-webkit-scrollbar{width:5px;}
   main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
@@ -198,6 +200,7 @@
   <button class="receipt-btn" onclick="openReceiptModal()">💳 Είσπραξη</button>
   <button class="schedule-btn" onclick="openScheduleModal()">🗓️ Δόσεις</button>
   <button class="sub-btn" onclick="openSubModal()">👷 Υπεργολάβοι</button>
+  <button class="biz-btn" onclick="openBizModal()">🏢 Γεν. Έξοδα</button>
 </div>
 
 <main id="chat">
@@ -270,6 +273,14 @@
     <div class="mbtns" id="subBtns"></div>
   </div>
 </div>
+<!-- BUSINESS EXPENSES -->
+<div class="overlay" id="bizModal" style="display:none">
+  <div class="modal" style="border-top-color:var(--red);max-width:620px">
+    <h3 style="color:var(--red)">🏢 ΓΕΝΙΚΑ ΕΞΟΔΑ ΕΠΙΧΕΙΡΗΣΗΣ</h3>
+    <div id="bizContent"></div>
+    <div class="mbtns" id="bizBtns"></div>
+  </div>
+</div>  
 <!-- MANAGE -->
 <div class="overlay" id="manageModal" style="display:none">
   <div class="modal">
@@ -355,6 +366,135 @@ async function init() {
   }
 }
 let subcontractors = {};
+let businessExpenses = [];
+
+async function loadBusinessExpenses() {
+  try {
+    const data = await dbCall('load_business_expenses');
+    businessExpenses = data.expenses || [];
+  } catch(e) {}
+}
+
+function openBizModal() {
+  document.getElementById('bizModal').style.display='flex';
+  renderBizContent();
+}
+function closeBizModal() { document.getElementById('bizModal').style.display='none'; }
+
+function renderBizContent() {
+  const content = document.getElementById('bizContent');
+  const btns = document.getElementById('bizBtns');
+
+  const categories = {
+    'Μισθοί': businessExpenses.filter(e=>e.category==='Μισθοί'),
+    'Ενοίκιο': businessExpenses.filter(e=>e.category==='Ενοίκιο'),
+    'ΔΕΗ': businessExpenses.filter(e=>e.category==='ΔΕΗ'),
+    'Καύσιμα': businessExpenses.filter(e=>e.category==='Καύσιμα'),
+    'Λογιστής': businessExpenses.filter(e=>e.category==='Λογιστής'),
+    'Φόροι': businessExpenses.filter(e=>e.category==='Φόροι'),
+    'Άλλο': businessExpenses.filter(e=>e.category==='Άλλο')
+  };
+
+  const total = businessExpenses.reduce((a,e)=>a+Number(e.amount),0);
+  const thisMonth = new Date().toLocaleDateString('el-GR',{month:'2-digit',year:'numeric'});
+  const monthlyTotal = businessExpenses
+    .filter(e=>e.date && e.date.includes(thisMonth.split('/')[1]))
+    .reduce((a,e)=>a+Number(e.amount),0);
+
+  content.innerHTML = `
+    <div style="background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;gap:20px;flex-wrap:wrap;">
+      <span>📊 Σύνολο: <strong style="color:var(--red)">€${total.toLocaleString('el-GR')}</strong></span>
+      <span>📅 Τρέχων μήνας: <strong style="color:var(--orange)">€${monthlyTotal.toLocaleString('el-GR')}</strong></span>
+      <span>📝 Εγγραφές: <strong>${businessExpenses.length}</strong></span>
+    </div>
+
+    ${Object.entries(categories).map(([cat, items]) => items.length === 0 ? '' : `
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+          ${cat} — €${items.reduce((a,e)=>a+Number(e.amount),0).toLocaleString('el-GR')}
+        </div>
+        ${items.map(e=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;">
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;">${e.recipient||'-'} <span style="font-size:11px;color:var(--dim);margin-left:4px;">${e.type||''}</span></div>
+              <div style="font-size:11px;color:var(--dim);">${e.date} ${e.note?'| '+e.note:''}</div>
+            </div>
+            <div style="font-weight:700;color:var(--accent);">€${Number(e.amount).toLocaleString('el-GR')}</div>
+            <button class="btn-del" onclick="deleteBizExpense('${e.id}')">🗑️</button>
+          </div>`).join('')}
+      </div>`).join('')}
+
+    <div id="bizForm"></div>
+  `;
+
+  btns.innerHTML = `
+    <button class="mbtn2" onclick="closeBizModal()">Κλείσιμο</button>
+    <button style="flex:1;background:var(--red);color:#fff;border:none;padding:12px;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;" onclick="showBizForm()">+ Νέο Έξοδο</button>
+  `;
+}
+
+function showBizForm() {
+  document.getElementById('bizForm').innerHTML = `
+    <div style="background:var(--surface2);border:1px solid rgba(231,76,60,0.4);border-radius:var(--radius-sm);padding:16px;margin-top:10px;">
+      <div style="font-weight:700;color:var(--red);margin-bottom:12px;">➕ Νέο Γενικό Έξοδο</div>
+      <div class="fg">
+        <label>Κατηγορία</label>
+        <select id="bizCat">
+          <option>Μισθοί</option>
+          <option>Ενοίκιο</option>
+          <option>ΔΕΗ</option>
+          <option>Καύσιμα</option>
+          <option>Λογιστής</option>
+          <option>Φόροι</option>
+          <option>Άλλο</option>
+        </select>
+      </div>
+      <div class="fg"><label>Παραλήπτης / Περιγραφή</label><input id="bizRecipient" placeholder="π.χ. Γιώργης εργάτης, ΔΕΗ"/></div>
+      <div class="fg"><label>Ποσό (€)</label><input id="bizAmount" type="number" placeholder="π.χ. 450"/></div>
+      <div class="fg">
+        <label>Τύπος</label>
+        <select id="bizType">
+          <option value="Εβδομαδιαίο">Εβδομαδιαίο</option>
+          <option value="Μηνιαίο">Μηνιαίο</option>
+          <option value="Έκτακτο">Έκτακτο</option>
+        </select>
+      </div>
+      <div class="fg"><label>Σημείωση</label><input id="bizNote" placeholder="Προαιρετικά"/></div>
+      <div class="mbtns">
+        <button class="mbtn2" onclick="document.getElementById('bizForm').innerHTML=''">Ακύρωση</button>
+        <button style="flex:1;background:var(--red);color:#fff;border:none;padding:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;" onclick="saveBizExpense()">💾 Αποθήκευση</button>
+      </div>
+    </div>`;
+  setTimeout(()=>document.getElementById('bizRecipient').focus(),100);
+}
+
+async function saveBizExpense() {
+  const category = document.getElementById('bizCat').value;
+  const recipient = document.getElementById('bizRecipient').value.trim();
+  const amount = Number(document.getElementById('bizAmount').value);
+  const type = document.getElementById('bizType').value;
+  const note = document.getElementById('bizNote').value.trim();
+  if (!recipient || !amount) { alert('Βάλε παραλήπτη και ποσό!'); return; }
+
+  const exp = {
+    id: 'be'+Date.now(),
+    category, recipient, amount,
+    date: new Date().toLocaleDateString('el-GR'),
+    type, note
+  };
+  await dbCall('save_business_expense', exp);
+  businessExpenses.unshift(exp);
+  showToast('✅ Έξοδο αποθηκεύτηκε!');
+  renderBizContent();
+}
+
+async function deleteBizExpense(id) {
+  if (!confirm('Διαγραφή αυτού του εξόδου;')) return;
+  await dbCall('delete_business_expense', { id });
+  businessExpenses = businessExpenses.filter(e=>e.id!==id);
+  showToast('🗑️ Διαγράφηκε!');
+  renderBizContent();
+}
 
 async function loadSubcontractors(projectId) {
   try {
@@ -1128,6 +1268,7 @@ function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scroll
 
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal')closeModal(); });
 document.getElementById('manageModal').addEventListener('click',e=>{ if(e.target.id==='manageModal')closeManage(); });
+document.getElementById('bizModal').addEventListener('click',e=>{ if(e.target.id==='bizModal')closeBizModal(); });
 document.getElementById('receiptModal').addEventListener('click',e=>{ if(e.target.id==='receiptModal')closeReceiptModal(); });
 document.getElementById('scheduleModal').addEventListener('click',e=>{ if(e.target.id==='scheduleModal')closeScheduleModal(); });
 async function checkPassword() {
@@ -1155,6 +1296,7 @@ window.addEventListener('beforeunload', () => {
   window.speechSynthesis.cancel();
 });
 init();
+loadBusinessExpenses();
 </script>
 </body>
 </html>

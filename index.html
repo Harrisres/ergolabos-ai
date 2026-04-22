@@ -390,48 +390,51 @@ function openBizModal() {
 }
 function closeBizModal() { document.getElementById('bizModal').style.display='none'; }
 
-function renderBizContent() {
+function renderBizContent(filterMonth='', filterCat='') {
   const content = document.getElementById('bizContent');
   const btns = document.getElementById('bizBtns');
 
-  const categories = {
-    'Μισθοί': businessExpenses.filter(e=>e.category==='Μισθοί'),
-    'Ενοίκιο': businessExpenses.filter(e=>e.category==='Ενοίκιο'),
-    'ΔΕΗ': businessExpenses.filter(e=>e.category==='ΔΕΗ'),
-    'Καύσιμα': businessExpenses.filter(e=>e.category==='Καύσιμα'),
-    'Λογιστής': businessExpenses.filter(e=>e.category==='Λογιστής'),
-    'Φόροι': businessExpenses.filter(e=>e.category==='Φόροι'),
-    'Άλλο': businessExpenses.filter(e=>e.category==='Άλλο')
-  };
+  // Φίλτρα
+  const months = [...new Set(businessExpenses.map(e=>e.date?.slice(-4)+'/'+e.date?.slice(3,5)))].filter(Boolean).sort().reverse();
+  const filtered = businessExpenses.filter(e => {
+    const monthMatch = !filterMonth || (e.date?.slice(-4)+'/'+e.date?.slice(3,5)) === filterMonth;
+    const catMatch = !filterCat || e.category === filterCat;
+    return monthMatch && catMatch;
+  });
 
-  const total = businessExpenses.reduce((a,e)=>a+Number(e.amount),0);
-  const thisMonth = new Date().toLocaleDateString('el-GR',{month:'2-digit',year:'numeric'});
-  const monthlyTotal = businessExpenses
-    .filter(e=>e.date && e.date.includes(thisMonth.split('/')[1]))
-    .reduce((a,e)=>a+Number(e.amount),0);
+  const total = filtered.reduce((a,e)=>a+Number(e.amount),0);
+  const cats = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Άλλο'];
 
   content.innerHTML = `
-    <div style="background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;gap:20px;flex-wrap:wrap;">
-      <span>📊 Σύνολο: <strong style="color:var(--red)">€${total.toLocaleString('el-GR')}</strong></span>
-      <span>📅 Τρέχων μήνας: <strong style="color:var(--orange)">€${monthlyTotal.toLocaleString('el-GR')}</strong></span>
-      <span>📝 Εγγραφές: <strong>${businessExpenses.length}</strong></span>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+        <option value="">📅 Όλοι οι μήνες</option>
+        ${months.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('')}
+      </select>
+      <select id="bizCatFilter" onchange="renderBizContent(document.querySelector('#bizContent select').value, this.value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+        <option value="">🏷️ Όλες οι κατηγορίες</option>
+        ${cats.map(c=>`<option value="${c}" ${filterCat===c?'selected':''}>${c}</option>`).join('')}
+      </select>
     </div>
 
-    ${Object.entries(categories).map(([cat, items]) => items.length === 0 ? '' : `
-      <div style="margin-bottom:14px;">
-        <div style="font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
-          ${cat} — €${items.reduce((a,e)=>a+Number(e.amount),0).toLocaleString('el-GR')}
-        </div>
-        ${items.map(e=>`
-          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;">
-            <div style="flex:1;">
-              <div style="font-size:13px;font-weight:600;">${e.recipient||'-'} <span style="font-size:11px;color:var(--dim);margin-left:4px;">${e.type||''}</span></div>
-              <div style="font-size:11px;color:var(--dim);">${e.date} ${e.note?'| '+e.note:''}</div>
-            </div>
-            <div style="font-weight:700;color:var(--accent);">€${Number(e.amount).toLocaleString('el-GR')}</div>
-            <button class="btn-del" onclick="deleteBizExpense('${e.id}')">🗑️</button>
-          </div>`).join('')}
-      </div>`).join('')}
+    <div style="background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;gap:20px;flex-wrap:wrap;">
+      <span>📊 Σύνολο: <strong style="color:var(--red)">€${total.toLocaleString('el-GR')}</strong></span>
+      <span>📝 Εγγραφές: <strong>${filtered.length}</strong></span>
+    </div>
+
+    ${filtered.length === 0 ? '<div class="empty-msg">Δεν βρέθηκαν εγγραφές</div>' : 
+      filtered.map(e=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;">
+          <div style="width:80px;font-size:11px;color:var(--dim);">${e.date}</div>
+          <div style="width:90px;font-size:11px;background:rgba(231,76,60,0.1);color:var(--red);padding:2px 8px;border-radius:10px;text-align:center;">${e.category}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">${e.recipient||'-'}</div>
+            ${e.note?`<div style="font-size:11px;color:var(--dim);">${e.note}</div>`:''}
+          </div>
+          <div style="font-size:11px;color:var(--dim);margin-right:4px;">${e.type||''}</div>
+          <div style="font-weight:700;color:var(--accent);">€${Number(e.amount).toLocaleString('el-GR')}</div>
+          <button class="btn-del" onclick="deleteBizExpense('${e.id}')">🗑️</button>
+        </div>`).join('')}
 
     <div id="bizForm"></div>
   `;

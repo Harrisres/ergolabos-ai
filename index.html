@@ -342,7 +342,7 @@ return `• ${s.name} (${s.specialty||''}) | Συνολικό: €${Number(s.tot
     if (!items.length) return '';
     return `• ${cat}: €${items.reduce((a,e)=>a+Number(e.amount),0).toLocaleString('el-GR')} (${items.length} εγγραφές)`;
   }).filter(Boolean).join('\n');
-  const bizCtx = businessExpenses.length ? `\n\n### Γενικά Έξοδα Επιχείρησης:\nΣύνολο: €${bizTotal.toLocaleString('el-GR')}\n${bizByCategory}` : '';
+  const bizCtx = businessExpenses.length ? `\n\n### Γενικά Έξοδα Επιχείρησης (ΞΕΧΩΡΙΣΤΑ από τα έξοδα εργοταξίου):\nΑυτά είναι πάγια έξοδα της επιχείρησης, ΟΧΙ κάποιου συγκεκριμένου έργου.\nΣύνολο: €${bizTotal.toLocaleString('el-GR')}\n${bizByCategory}` : '';
 
   return `Είσαι ο "Εργολάβος AI", βοηθός για έλληνα εργολάβο ανακαίνισης. Μιλάς ΠΑΝΤΑ ελληνικά, φιλικά και πρακτικά.\nΣήμερα: ${today}${ctx}\n\nΤΙ ΚΑΝΕΙΣ: Καταχώρηση εξόδων, εισπράξεων, εργασιών, reports, emails, υπολογισμοί.\n\nΟΤΑΝ ο χρήστης αναφέρει πληρωμή/έξοδο:\nSAVE_EXPENSE:{"category":"[κατ]","recipient":"[παρ]","amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει είσπραξη:\nSAVE_RECEIPT:{"amount":[ποσό],"note":"[σημ]"}\n\nΟΤΑΝ αναφέρει εργασία:\nSAVE_TASK:{"name":"[όνομα]","assignee":"[υπεύθ]","deadline":"[προθ]"}\n\nΟΤΑΝ ο χρήστης θέλει να δημιουργήσει νέο έργο:\nSAVE_PROJECT:{"name":"[όνομα]","client":"[πελάτης]","budget":[ποσό],"start_date":""}\n\nΑπάντα σύντομα. Χρησιμοποίησε πίνακες για αριθμητικά.${bizCtx}`;
 }

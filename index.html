@@ -371,8 +371,8 @@ let businessExpenses = [];
 async function loadBusinessExpenses() {
   try {
     const data = await dbCall('load_business_expenses');
-    businessExpenses = data.expenses || [];
-  } catch(e) {}
+    businessExpenses = Array.isArray(data.expenses) ? data.expenses : [];
+  } catch(e) { businessExpenses = []; }
 }
 
 function openBizModal() {

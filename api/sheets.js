@@ -197,7 +197,33 @@ export default async function handler(req, res) {
       });
       return res.status(200).json({ ok: true });
     }
-    return res.status(400).json({ error: 'unknown type' });
+    if (type === 'save_business_expense') {
+  await supabase('POST', 'business_expenses', {
+    id: data.id,
+    category: data.category,
+    recipient: data.recipient,
+    amount: data.amount,
+    date: data.date,
+    type: data.type,
+    note: data.note || ''
+  });
+  return res.status(200).json({ ok: true });
+}
+
+if (type === 'load_business_expenses') {
+  const expenses = await supabase('GET', 'business_expenses', null, '?select=*&order=date.desc');
+  return res.status(200).json({ expenses: expenses || [] });
+}
+
+if (type === 'delete_business_expense') {
+  const delRes = await fetch(`${SUPABASE_URL}/rest/v1/business_expenses?id=eq.${data.id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  return res.status(200).json({ ok: delRes.ok });
+}
+
+return res.status(400).json({ error: 'unknown type' });
 
   } catch (e) {
     return res.status(500).json({ error: e.message });

@@ -337,7 +337,7 @@ return `• ${s.name} (${s.specialty||''}) | Συνολικό: €${Number(s.tot
   } else ctx = '\nΔεν έχει επιλεγεί εργοτάξιο.';
 
   const bizTotal = businessExpenses.reduce((a,e)=>a+Number(e.amount),0);
-  const bizByCategory = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Άλλο'].map(cat => {
+  const bizByCategory = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Εργαλεία/Εξοπλισμός','Άλλο'].map(cat => {
     const items = businessExpenses.filter(e=>e.category===cat);
     if (!items.length) return '';
     return `• ${cat}: €${items.reduce((a,e)=>a+Number(e.amount),0).toLocaleString('el-GR')} (${items.length} εγγραφές)`;
@@ -410,7 +410,7 @@ function renderBizContent(filterMonth='', filterCat='') {
   });
 
   const total = filtered.reduce((a,e)=>a+Number(e.amount),0);
-  const cats = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Άλλο'];
+  const cats = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Εργαλεία/Εξοπλισμός','Άλλο'];
 
   content.innerHTML = `
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
@@ -476,6 +476,7 @@ function showBizForm() {
           <option>Καύσιμα</option>
           <option>Λογιστής</option>
           <option>Φόροι</option>
+          <option>Εργαλεία/Εξοπλισμός</option>
           <option>Άλλο</option>
         </select>
       </div>

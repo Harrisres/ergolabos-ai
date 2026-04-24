@@ -413,8 +413,8 @@ function renderBizContent(filterMonth='', filterCat='') {
   const cats = ['Μισθοί','Ενοίκιο','ΔΕΗ','Καύσιμα','Λογιστής','Φόροι','Εργαλεία/Εξοπλισμός','Άλλο'];
 
   content.innerHTML = `
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-      <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 8px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;outline:none;">
         <option value="">📅 Όλη η περίοδος</option>
         <optgroup label="── Μήνες ──">
           ${months.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('')}
@@ -429,7 +429,8 @@ function renderBizContent(filterMonth='', filterCat='') {
           <option value="year" ${filterMonth==='year'?'selected':''}>Ολόκληρο το έτος</option>
         </optgroup>
       </select>
-      <select id="bizCatFilter" onchange="renderBizContent(document.querySelector('#bizContent select').value, this.value)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 8px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;outline:none;">
         <option value="">🏷️ Όλες οι κατηγορίες</option>
         ${cats.map(c=>`<option value="${c}" ${filterCat===c?'selected':''}>${c}</option>`).join('')}
       </select>
@@ -443,7 +444,7 @@ function renderBizContent(filterMonth='', filterCat='') {
     ${filtered.length === 0 ? '<div class="empty-msg">Δεν βρέθηκαν εγγραφές</div>' : 
       filtered.map(e=>`
         <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;">
-          <div style="width:80px;font-size:11px;color:var(--dim);">${e.date}</div>
+          <div style="width:70px;font-size:10px;color:var(--dim);">${e.date}</div>
           <div style="width:90px;font-size:11px;background:rgba(231,76,60,0.1);color:var(--red);padding:2px 8px;border-radius:10px;text-align:center;">${e.category}</div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:600;">${e.recipient||'-'}</div>

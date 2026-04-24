@@ -429,8 +429,7 @@ function renderBizContent(filterMonth='', filterCat='') {
           <option value="year" ${filterMonth==='year'?'selected':''}>Ολόκληρο το έτος</option>
         </optgroup>
       </select>
-      <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <select onchange="renderBizContent(this.value, document.getElementById('bizCatFilter').value)" style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 8px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;outline:none;">
+      <select id="bizCatFilter" onchange="renderBizContent(document.querySelector('#bizContent select').value, this.value)" style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 8px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;outline:none;">
         <option value="">🏷️ Όλες οι κατηγορίες</option>
         ${cats.map(c=>`<option value="${c}" ${filterCat===c?'selected':''}>${c}</option>`).join('')}
       </select>

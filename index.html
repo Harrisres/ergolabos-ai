@@ -138,6 +138,23 @@
   .schedule-row .desc{flex:1;}
   .schedule-row .amt{width:110px;color:var(--accent);font-weight:600;}
   .schedule-summary{background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;}
+  /* BIZ EXPENSE CARDS */
+  .biz-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px;}
+  .biz-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .biz-date{font-size:11px;color:var(--dim);white-space:nowrap;}
+  .biz-cat{font-size:11px;background:rgba(231,76,60,0.1);color:var(--red);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+  .biz-amount{font-weight:700;color:var(--accent);margin-left:auto;font-size:14px;white-space:nowrap;}
+  .biz-del{flex-shrink:0;}
+  .biz-bottom{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:2px;}
+  .biz-name{font-size:13px;font-weight:600;color:var(--text);}
+  .biz-note{font-size:11px;color:var(--dim);}
+  .biz-type{font-size:10px;color:var(--dim);background:var(--bg);padding:1px 7px;border-radius:8px;margin-left:auto;}
+  @media(max-width:600px){
+    .biz-date{font-size:10px;}
+    .biz-cat{font-size:10px;padding:2px 6px;}
+    .biz-amount{font-size:13px;}
+    .biz-name{font-size:13px;}
+  }
 
  @media(max-width:600px){
     header{padding:0 12px;height:58px;}
@@ -477,16 +494,18 @@ function renderBizContent(filterMonth='', filterCat='') {
 
     ${filtered.length === 0 ? '<div class="empty-msg">Δεν βρέθηκαν εγγραφές</div>' : 
       filtered.map(e=>`
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;">
-          <div style="width:70px;font-size:10px;color:var(--dim);">${e.date}</div>
-          <div style="width:90px;font-size:11px;background:rgba(231,76,60,0.1);color:var(--red);padding:2px 8px;border-radius:10px;text-align:center;">${e.category}</div>
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:600;">${e.recipient||'-'}</div>
-            ${e.note?`<div style="font-size:11px;color:var(--dim);">${e.note}</div>`:''}
+        <div class="biz-card">
+          <div class="biz-top">
+            <span class="biz-date">${e.date}</span>
+            <span class="biz-cat">${e.category}</span>
+            <span class="biz-amount">€${Number(e.amount).toLocaleString('el-GR')}</span>
+            <button class="btn-del biz-del" onclick="deleteBizExpense('${e.id}')">🗑️</button>
           </div>
-          <div style="font-size:11px;color:var(--dim);margin-right:4px;">${e.type||''}</div>
-          <div style="font-weight:700;color:var(--accent);">€${Number(e.amount).toLocaleString('el-GR')}</div>
-          <button class="btn-del" onclick="deleteBizExpense('${e.id}')">🗑️</button>
+          <div class="biz-bottom">
+            <span class="biz-name">${e.recipient||'-'}</span>
+            ${e.note?`<span class="biz-note">${e.note}</span>`:''}
+            ${e.type?`<span class="biz-type">${e.type}</span>`:''}
+          </div>
         </div>`).join('')}
 
     <div id="bizForm"></div>
